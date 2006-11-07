@@ -1,0 +1,11 @@
+# -*- Python -*-
+
+Import('env paths targets')
+
+data_files = ['elfelli-logo.svg',
+              'negative.svg',
+              'positive.svg',
+              'ui.xml']
+
+if 'install' in targets:
+    env.Install(paths['datadir'], data_files)

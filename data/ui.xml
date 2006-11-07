@@ -1,0 +1,29 @@
+<ui>
+  <menubar name="MenuBar">
+    <menu action="MenuScene">
+      <menuitem action="New"/>
+      <menuitem action="Open"/>
+      <menuitem action="SaveAs"/>
+      <separator/>
+      <menuitem action="ExportPNG"/>
+      <!--<menuitem action="ExportSVG"/>-->
+      <separator/>
+      <menuitem action="Quit"/>
+    </menu>
+    <menu action="MenuEdit">
+      <menuitem action="Clear"/>
+      <separator/>
+      <menuitem action="AddNegative"/>
+      <menuitem action="AddPositive"/>
+    </menu>
+    <menu action="MenuHelp">
+      <menuitem action="About"/>
+    </menu>
+  </menubar>
+  <toolbar name="ToolBar">
+    <toolitem action="Clear"/>
+    <separator/>
+    <toolitem action="AddNegative"/>
+    <toolitem action="AddPositive"/>
+  </toolbar>
+</ui>

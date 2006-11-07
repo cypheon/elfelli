@@ -1,0 +1,14 @@
+# -*- Python -*-
+
+Import('env paths targets')
+
+elfelli_sources = ['Application.cpp',
+                   'Canvas.cpp',
+                   'Simulation.cpp',
+                   'SimulationCanvas.cpp',
+                   'Main.cpp']
+
+elfelli = env.Program('elfelli', elfelli_sources)
+
+if 'install' in targets:
+    env.Install(paths['bindir'], elfelli)
