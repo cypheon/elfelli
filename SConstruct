@@ -51,7 +51,8 @@ else:
 
 paths = {
         "bindir": env['prefix']+'/bin',
-        "datadir": env['prefix']+'/share/elfelli'}
+        "datadir": env['prefix']+'/share/elfelli',
+        "localedir": env['prefix']+'/share/locale'}
 
 if 'install' in targets:
         try:
@@ -64,10 +65,12 @@ if 'install' in targets:
         except OSError,e:
                 print 'Error %d: %s' % (e[0],e[1])
                 Exit(1)
+        os.system('./update_i18n.py install %s' % paths['localedir'])
 
 
 env.AppendUnique(CPPFLAGS=r'-DDATADIR=\"%s\" '%paths['datadir'])
-env.Alias("install", [paths['bindir'],paths['datadir']])
+env.AppendUnique(CPPFLAGS=r'-DLOCALEDIR=\"%s\" '%paths['localedir'])
+env.Alias("install", paths.values())
 
 Help("""
 scons        Build the program.

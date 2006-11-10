@@ -20,6 +20,10 @@
 
 #include <gtkmm.h>
 
+#include <libintl.h>
+#define _(String) gettext(String)
+#define N_(String) String
+
 #include "SimulationCanvas.h"
 
 namespace Elfelli
@@ -39,6 +43,8 @@ class Application
   static const std::string datadir;
 
  private:
+  void setup_gettext();
+
   bool build_gui();
   bool setup_ui_actions();
   void setup_file_chooser_dialogs();

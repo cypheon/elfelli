@@ -37,7 +37,22 @@ Application::Application(int argc, char **argv):
   gtk_main(argc, argv),
   save_dlg(main_win, "", FILE_CHOOSER_ACTION_SAVE)
 {
+  setup_gettext();
   build_gui();
+}
+
+void Application::setup_gettext()
+{
+  setlocale(LC_ALL, "");
+
+  std::ifstream in("po/locale/de/LC_MESSAGES/elfelli.mo");
+  if(in)
+    bindtextdomain("elfelli", "po/locale");
+  else
+    bindtextdomain("elfelli", LOCALEDIR);
+  in.close();
+
+  textdomain("elfelli");
 }
 
 const std::string Application::find_datafile(const std::string& fname)
@@ -76,7 +91,7 @@ void Application::on_export_png_activate()
 {
   std::string filename = "";
 
-  save_dlg.set_title("PNG exportieren");
+  save_dlg.set_title(_("Export PNG"));
 
   int result = save_dlg.run();
   if(result == RESPONSE_OK)
@@ -114,26 +129,25 @@ void Application::on_about_activate()
 {
   AboutDialog dlg;
 
-  const std::string license_parts[3] = {
-    "Dieses Programm ist freie Software. Sie können es unter den Bedingungen\n"
-    "der GNU General Public License, wie von der Free Software Foundation ver-\n"
-    "öffentlicht, weitergeben und/oder modifizieren; entweder gemäß Version 2\n"
-    "der Lizenz, oder (nach Ihrem Ermessen) gemäß jeder späteren Version.\n",
+  const char *license_parts[] = {
+    N_("This program is free software; you can redistribute it and/or modify\n"
+       "it under the terms of the GNU General Public License as published by\n"
+       "the Free Software Foundation; either version 2 of the License, or\n"
+       "at your option) any later version.\n"),
+ 
+    N_("This program is distributed in the hope that it will be useful,\n"
+       "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+       "GNU General Public License for more details.\n"),
 
-    "Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es\n"
-    "Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne\n"
-    "die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN\n"
-    "BESTIMMTEN ZWECK. Details finden Sie in der GNU General Public License.\n",
-
-    "Sie sollten ein Exemplar der GNU General Public License zusammen mit\n"
-    "diesem Programm erhalten haben, Falls nicht, schreiben Sie an die\n"
-    "Free Software Foundation, Inc.\n"
-    "51 Franklin Street, Fifth Floor, Boston, MA 02110, USA.\n"};
+    N_("You should have received a copy of the GNU General Public License\n"
+       "along with this program; if not, write to the Free Software\n"
+       "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\n")};
 
   const std::string license_text =
-    license_parts[0] + "\n"
-    + license_parts[1] + "\n"
-    + license_parts[2];
+    std::string(_(license_parts[0])) + "\n"
+    + _(license_parts[1]) + "\n"
+    + _(license_parts[2]);
 
   dlg.set_name(appname);
   dlg.set_version(version);
@@ -160,20 +174,20 @@ bool Application::setup_ui_actions()
 {
   action_group = ActionGroup::create();
 
-  action_group->add( Action::create("MenuScene", "_Szene") );
+  action_group->add( Action::create("MenuScene", _("_Scene")) );
   action_group->add( Action::create("New", Stock::NEW) , sigc::mem_fun(*this, &Application::reset_simulation));
   action_group->add( Action::create("Open", Stock::OPEN) );
   action_group->add( Action::create("SaveAs", Stock::SAVE_AS) );
-  action_group->add( Action::create("ExportPNG", "Exportieren als _PNG") , sigc::mem_fun(*this, &Application::on_export_png_activate));
-  action_group->add( Action::create("ExportSVG", "Exportieren als S_VG") );
+  action_group->add( Action::create("ExportPNG", _("Export _PNG")) , sigc::mem_fun(*this, &Application::on_export_png_activate));
+  action_group->add( Action::create("ExportSVG", _("Export S_VG")) );
   action_group->add( Action::create("Quit", Stock::QUIT) , sigc::mem_fun(*this, &Application::quit));
 
-  action_group->add( Action::create("MenuEdit", "_Bearbeiten") );
+  action_group->add( Action::create("MenuEdit", _("E_dit")) );
   action_group->add( Action::create("Clear", Stock::CLEAR) , sigc::mem_fun(*this, &Application::reset_simulation));
-  action_group->add( Action::create("AddNegative", "Negativer Körper") , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
-  action_group->add( Action::create("AddPositive", "Positiver Körper") , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
+  action_group->add( Action::create("AddNegative", _("Negative body")) , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
+  action_group->add( Action::create("AddPositive", _("Positive body")) , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
 
-  action_group->add( Action::create("MenuHelp", "_Hilfe") );
+  action_group->add( Action::create("MenuHelp", _("_Help")) );
   action_group->add( Action::create("About", Stock::ABOUT) , sigc::mem_fun(*this, &Application::on_about_activate));
 
   ui_manager = UIManager::create();

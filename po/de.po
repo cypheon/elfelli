@@ -1,0 +1,86 @@
+# German translations for Elfelli
+# German messages for Elfelli.
+# Copyright (C) 2006 Johann Rudloff
+# This file is distributed under the same license as the Elfelli package.
+# Johann Rudloff <cypheon@gmx.net>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: elfelli 01\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-11-10 23:43+0100\n"
+"PO-Revision-Date: 2006-11-07 20:30+0100\n"
+"Last-Translator: Johann Rudloff <cypheon@gmx.net>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/Application.cpp:94
+msgid "Export PNG"
+msgstr "PNG exportieren"
+
+#: src/Application.cpp:133
+msgid ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2 of the License, or\n"
+"at your option) any later version.\n"
+msgstr ""
+"Dieses Programm ist freie Software. Sie können es unter den Bedingungen\n"
+"der GNU General Public License, wie von der Free Software Foundation ver-\n"
+"öffentlicht, weitergeben und/oder modifizieren; entweder gemäß Version 2\n"
+"der Lizenz, oder (nach Ihrem Ermessen) gemäß jeder späteren Version.\n"
+
+#: src/Application.cpp:138
+msgid ""
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+msgstr ""
+"Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es\n"
+"Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE, sogar ohne\n"
+"die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN\n"
+"BESTIMMTEN ZWECK. Details finden Sie in der GNU General Public License.\n"
+
+#: src/Application.cpp:143
+msgid ""
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software\n"
+"Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  "
+"USA\n"
+msgstr ""
+"Sie sollten ein Exemplar der GNU General Public License zusammen mit\n"
+"diesem Programm erhalten haben, Falls nicht, schreiben Sie an die\n"
+"Free Software Foundation, Inc.\n"
+"51 Franklin Street, Fifth Floor, Boston, MA 02110, USA.\n"
+
+#: src/Application.cpp:177
+msgid "_Scene"
+msgstr "_Szene"
+
+#: src/Application.cpp:181
+msgid "Export _PNG"
+msgstr "_PNG exportieren"
+
+#: src/Application.cpp:182
+msgid "Export S_VG"
+msgstr "S_VG exportieren"
+
+#: src/Application.cpp:185
+msgid "E_dit"
+msgstr "_Bearbeiten"
+
+#: src/Application.cpp:187
+msgid "Negative body"
+msgstr "Negativer Körper"
+
+#: src/Application.cpp:188
+msgid "Positive body"
+msgstr "Positiver Körper"
+
+#: src/Application.cpp:190
+msgid "_Help"
+msgstr "_Hilfe"
