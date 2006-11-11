@@ -65,7 +65,7 @@ if 'install' in targets:
         except OSError,e:
                 print 'Error %d: %s' % (e[0],e[1])
                 Exit(1)
-        os.system('./update_i18n.py install %s' % paths['localedir'])
+        os.system('./i18n.py install %s' % paths['localedir'])
 
 
 env.AppendUnique(CPPFLAGS=r'-DDATADIR=\"%s\" '%paths['datadir'])
