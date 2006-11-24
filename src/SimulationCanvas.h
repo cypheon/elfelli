@@ -52,6 +52,8 @@ private:
   void draw_flux_lines();
   void draw_bodies(bool draw_selected=true);
   inline void draw_body(int n);
+  void draw_plates(bool draw_selected=true);
+  inline void draw_plate(int n);
 
   static char *color_names[];
 
@@ -61,7 +63,7 @@ private:
   int mouse_over, selected;
   Gdk::Point last_click, drag_offset;
 
-  Glib::RefPtr<Gdk::GC> gc, gc_black, gc_white, gc_selection;
+  Glib::RefPtr<Gdk::GC> gc, gc_black, gc_white, gc_selection, gc_platebody;
   Gdk::Color colors[BODY_STATES_NUM * 2];
   Glib::RefPtr<Gdk::Pixmap> lines_pixmap;
   std::vector<Path> paths;

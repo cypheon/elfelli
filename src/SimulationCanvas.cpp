@@ -115,6 +115,7 @@ void SimulationCanvas::plot()
 
   pixmap->draw_drawable(gc, lines_pixmap, 0, 0, 0, 0, get_width(), get_height());
 
+  draw_plates();
   draw_bodies();
 
   get_window()->invalidate_rect(Gdk::Rectangle(0, 0, get_width(), get_height()), false);
@@ -192,7 +193,7 @@ void SimulationCanvas::draw_bodies(bool draw_selected)
           draw_body(i);
         }
     }
-  if(selected >= 0 && draw_selected)
+  if((selected >= 0 && selected < 1024) && draw_selected)
     {
       const Body& body = bodies[selected];
       draw_body(selected);
@@ -209,6 +210,77 @@ void SimulationCanvas::draw_bodies(bool draw_selected)
       get_window()->invalidate_rect(rect, false);
     }
 }
+
+inline void SimulationCanvas::draw_plate(int n)
+{
+  const PlateBody& plate = plates[n];
+
+  int offset = 0;
+  if(plate.charge > 0)
+    offset = 3;
+
+  Gdk::Color color;
+  if(mouse_over == (n+1024))
+    color = colors[offset + BODY_STATE_HIGHLIGHT];
+  else
+    color = colors[offset + BODY_STATE_NORMAL];
+
+  gc_platebody->set_foreground(color);
+
+  pixmap->draw_line(gc_platebody,
+                    static_cast<int>(plate.pos_a.get_x()),
+                    static_cast<int>(plate.pos_a.get_y()),
+                    static_cast<int>(plate.pos_b.get_x()),
+                    static_cast<int>(plate.pos_b.get_y()));
+
+  Gdk::Rectangle rect;
+      
+  rect.set_x(static_cast<int>(plate.pos_a.get_x()));
+  rect.set_y(static_cast<int>(plate.pos_a.get_y()));
+  rect.set_width(static_cast<int>(plate.pos_b.get_x()) - static_cast<int>(plate.pos_a.get_x()));
+  rect.set_height(static_cast<int>(plate.pos_b.get_y()) - static_cast<int>(plate.pos_a.get_y()));
+
+  get_window()->invalidate_rect(rect, false);
+
+}
+
+void SimulationCanvas::draw_plates(bool draw_selected)
+{
+  for(int i=0; i<plates.size(); i++)
+    {
+      if(selected == (i+1024))
+        {
+        }
+      else
+        {
+          draw_plate(i);
+        }
+    }
+
+  if(selected >= 1024 && draw_selected)
+    {
+      const PlateBody& plate = plates[selected-1024];
+      draw_plate(selected-1024);
+
+      /*
+      pixmap->draw_arc(gc_selection, false,
+                       static_cast<int>(body.pos.get_x() - body_radius*2),
+                       static_cast<int>(body.pos.get_y() - body_radius*2),
+                       body_radius*4, body_radius*4, 0, (360*64));
+
+      Gdk::Rectangle rect;
+      rect.set_x(static_cast<int>(body.pos.get_x() - body_radius*2)-5);
+      rect.set_y(static_cast<int>(body.pos.get_y() - body_radius*2)-5);
+      rect.set_width(body_radius*4+10);
+      rect.set_height(body_radius*4+10);
+      get_window()->invalidate_rect(rect, false);*/
+    }
+}
+
+
+
+
+
 
 void SimulationCanvas::after_realize_event()
 {
@@ -231,6 +303,11 @@ void SimulationCanvas::after_realize_event()
   gc_selection->set_rgb_fg_color(Gdk::Color("green"));
   gc_selection->set_rgb_bg_color(Gdk::Color("black"));
   gc_selection->set_line_attributes(4, Gdk::LINE_SOLID,
+                                    Gdk::CAP_ROUND, Gdk::JOIN_ROUND);
+
+  gc_platebody = Gdk::GC::create(get_pixmap());
+  gc_platebody->set_rgb_bg_color(Gdk::Color("white"));
+  gc_platebody->set_line_attributes(4, Gdk::LINE_SOLID,
                                     Gdk::CAP_ROUND, Gdk::JOIN_ROUND);
 
   Glib::RefPtr<Gdk::Colormap> cmap = get_pixmap()->get_colormap();
@@ -277,6 +354,7 @@ bool SimulationCanvas::on_motion_notify_event(GdkEventMotion *event)
 
       get_window()->invalidate_rect(Gdk::Rectangle(x-5, y-5, 4*body_radius+10, 4*body_radius+10), false);
       
+      draw_plates();
       draw_bodies();
     }
   else
@@ -299,6 +377,7 @@ bool SimulationCanvas::on_motion_notify_event(GdkEventMotion *event)
             }
           if(old != mouse_over)
             {
+              draw_plates();
               draw_bodies();
             }
         }
@@ -335,6 +414,7 @@ bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
     }
 
   selected = mouse_over;
+  draw_plates();
   draw_bodies();
 }
 
@@ -350,6 +430,7 @@ bool SimulationCanvas::on_button_release_event(GdkEventButton *event)
     }
   else
     {
+      draw_plates();
       draw_bodies();
     }
 }

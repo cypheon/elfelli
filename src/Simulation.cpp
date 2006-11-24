@@ -175,6 +175,17 @@ bool Simulation::step(Particle& p, float dtime)
   return true;
 }
 
+void Simulation::add_body(const Vec2& v, float charge)
+{
+  /* Numbers greter than 1024 are reserved for PlateBodies. */
+  if(bodies.size() >= 1024) return;
+
+  Body b;
+  b.charge = charge;
+  b.pos = v;
+  bodies.push_back(b);
+};
+
 void Simulation::run()
 {
   profile_func_start(__PRETTY_FUNCTION__);

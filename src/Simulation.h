@@ -69,6 +69,13 @@ struct Body
   float charge;
 };
 
+struct PlateBody
+{
+  Vec2 pos_a;
+  Vec2 pos_b;
+  float charge;
+};
+
 struct Particle
 {
   Particle(){n=0;};
@@ -95,13 +102,7 @@ public:
   Vec2 force_at(const Vec2& pos, float charge);
   void reset(){bodies.clear();result.clear();};
 
-  void add_body(const Vec2& v, float charge)
-  {
-    Body b;
-    b.charge = charge;
-    b.pos = v;
-    bodies.push_back(b);
-  };
+  void add_body(const Vec2& v, float charge);
 
   Body& operator[](int n){return bodies[n];};
   int n_bodies(){return bodies.size();};
@@ -113,6 +114,7 @@ protected:
   virtual void run();
 
   std::vector<Body> bodies;
+  std::vector<PlateBody> plates;
   std::vector<FluxLine> result;
 
 };
