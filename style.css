@@ -1,0 +1,17 @@
+
+body {font-family: Bitstream Vera Sans; font-size: 9pt;}
+
+#header {text-align: center; padding-top: 100px; background: url(elfelli-logo.png) no-repeat top center;}
+#header h1 {font-size: 300%; margin-bottom: .1em;}
+
+#navbar {list-style-type: none; padding: 2px; text-align: center; margin-bottom: 2em; margin-top: 2em;}
+#navbar li {display: inline; padding: 3px;}
+#navbar a:link, #navbar a:visited {text-decoration: none; color: #000; border: none;}
+#navbar a:hover {text-decoration: none; color: #00f; background-color: transparent;}
+
+a:link, a:visited {text-decoration: none; color: #00f; border-bottom: 1px dotted #999; background-color: transparent;}
+a:hover {color: #009; background-color: #eee;}
+
+#content {padding-left: 2em; padding-right: 2em;}
+
+code {border: 2px dashed #999; background-color: #eee; padding: .5em; margin-left: 2em;}
