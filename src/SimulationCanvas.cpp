@@ -36,8 +36,8 @@ char *SimulationCanvas::color_names[] = {
   "#660000"};
 
 SimulationCanvas::SimulationCanvas():
-  mouse_pressed(false), body_radius(10),
-  dragging(false), mouse_over(-1), selected(-1)
+  mouse_pressed(false), body_radius(10), plate_radius(5),
+  drag_state(DRAG_STATE_NONE), mouse_over(-1), active(-1)
 {
   signal_realize().connect(sigc::mem_fun(*this, &SimulationCanvas::after_realize_event));
 }
@@ -55,10 +55,18 @@ void SimulationCanvas::refresh()
 void SimulationCanvas::clear()
 {
   bodies.clear();
+  plates.clear();
   paths.clear();
 
-  mouse_over = selected = -1;
-  dragging = false;
+  PlateBody p;
+  p.pos_a = Vec2(100, 100);
+  p.pos_b = Vec2(150, 200);
+  p.charge = -4;
+
+  plates.push_back(p);
+
+  mouse_over = active = -1;
+  drag_state = DRAG_STATE_NONE;
 
   refresh();
 }
@@ -75,20 +83,54 @@ bool SimulationCanvas::delete_body(int n)
 
   int num = bodies.size();
 
-  if(selected == n)
-    selected = -1;
+  if(active == n)
+    active = -1;
   if(mouse_over == n)
     mouse_over = -1;
 
-  dragging = false;
+  drag_state = DRAG_STATE_NONE;
+
+  refresh();
+}
+
+bool SimulationCanvas::delete_plate(int n)
+{
+  if(!((n < plates.size())
+       && (n >= 0)))
+    {
+      return false;
+    }
+
+  plates.erase(plates.begin() + n);
+
+  int num = plates.size();
+
+  if(active == (n + 1024))
+    active = -1;
+  if(mouse_over == (n + 1024))
+    mouse_over = -1;
+
+  drag_state = DRAG_STATE_NONE;
 
   refresh();
 }
 
 bool SimulationCanvas::delete_selected()
 {
-  bool r = delete_body(selected);
-  selected = -1;
+  bool r;
+  if(active < 0)
+    return false;
+
+  if(active < 1024)
+  {
+    r = delete_body(active);
+  }
+  else
+  {
+    r = delete_plate(active - 1024);
+  }
+
+  active = -1;
   return r;
 }
 
@@ -176,7 +218,7 @@ void SimulationCanvas::draw_bodies(bool draw_selected)
 {
   for(int i=0; i<bodies.size(); i++)
     {
-      if(selected == i)
+      if(active == i)
         {/*
           pixmap->draw_arc(gc_selection, false,
                            static_cast<int>(body.pos.get_x() - body_radius*2),
@@ -193,10 +235,10 @@ void SimulationCanvas::draw_bodies(bool draw_selected)
           draw_body(i);
         }
     }
-  if((selected >= 0 && selected < 1024) && draw_selected)
+  if((active >= 0 && active < 1024) && draw_selected)
     {
-      const Body& body = bodies[selected];
-      draw_body(selected);
+      const Body& body = bodies[active];
+      draw_body(active);
       pixmap->draw_arc(gc_selection, false,
                        static_cast<int>(body.pos.get_x() - body_radius*2),
                        static_cast<int>(body.pos.get_y() - body_radius*2),
@@ -234,11 +276,28 @@ inline void SimulationCanvas::draw_plate(int n)
                     static_cast<int>(plate.pos_b.get_y()));
 
   Gdk::Rectangle rect;
-      
-  rect.set_x(static_cast<int>(plate.pos_a.get_x()));
-  rect.set_y(static_cast<int>(plate.pos_a.get_y()));
-  rect.set_width(static_cast<int>(plate.pos_b.get_x()) - static_cast<int>(plate.pos_a.get_x()));
-  rect.set_height(static_cast<int>(plate.pos_b.get_y()) - static_cast<int>(plate.pos_a.get_y()));
+
+  if(plate.pos_a.get_x() < plate.pos_b.get_x())
+  {
+    rect.set_x(static_cast<int>(plate.pos_a.get_x()) - plate_radius);
+    rect.set_width(static_cast<int>(plate.pos_b.get_x()) - static_cast<int>(plate.pos_a.get_x()) + 2*plate_radius);
+  }
+  else
+  {
+    rect.set_x(static_cast<int>(plate.pos_b.get_x()) - plate_radius);
+    rect.set_width(static_cast<int>(plate.pos_a.get_x()) - static_cast<int>(plate.pos_b.get_x()) + 2*plate_radius);
+  }
+     
+  if(plate.pos_a.get_y() < plate.pos_b.get_y())
+  {
+    rect.set_y(static_cast<int>(plate.pos_a.get_y()) - plate_radius);
+    rect.set_height(static_cast<int>(plate.pos_b.get_y()) - static_cast<int>(plate.pos_a.get_y()) + 2*plate_radius);
+  }
+  else
+  {
+    rect.set_y(static_cast<int>(plate.pos_b.get_y()) - plate_radius);
+    rect.set_height(static_cast<int>(plate.pos_a.get_y()) - static_cast<int>(plate.pos_b.get_y()) + 2*plate_radius);
+  }
 
   get_window()->invalidate_rect(rect, false);
 
@@ -248,7 +307,7 @@ void SimulationCanvas::draw_plates(bool draw_selected)
 {
   for(int i=0; i<plates.size(); i++)
     {
-      if(selected == (i+1024))
+      if(active == (i+1024))
         {
         }
       else
@@ -257,10 +316,10 @@ void SimulationCanvas::draw_plates(bool draw_selected)
         }
     }
 
-  if(selected >= 1024 && draw_selected)
+  if(active >= 1024 && draw_selected)
     {
-      const PlateBody& plate = plates[selected-1024];
-      draw_plate(selected-1024);
+      const PlateBody& plate = plates[active-1024];
+      draw_plate(active-1024);
 
       /*
       pixmap->draw_arc(gc_selection, false,
@@ -276,11 +335,6 @@ void SimulationCanvas::draw_plates(bool draw_selected)
       get_window()->invalidate_rect(rect, false);*/
     }
 }
-
-
-
-
-
 
 void SimulationCanvas::after_realize_event()
 {
@@ -341,13 +395,15 @@ bool SimulationCanvas::on_motion_notify_event(GdkEventMotion *event)
 {
   int old = mouse_over;
 
-  if(dragging)
+  switch(drag_state)
+  {
+  case DRAG_STATE_BODY:
     {
       int x, y;
-      x = static_cast<int>(bodies[selected].pos.get_x()) - 2*body_radius;
-      y = static_cast<int>(bodies[selected].pos.get_y()) - 2*body_radius;
+      x = static_cast<int>(bodies[active].pos.get_x()) - 2*body_radius;
+      y = static_cast<int>(bodies[active].pos.get_y()) - 2*body_radius;
       
-      bodies[selected].pos = Vec2(event->x+drag_offset.get_x(), event->y+drag_offset.get_y());
+      bodies[active].pos = Vec2(event->x+drag_offset.get_x(), event->y+drag_offset.get_y());
 
       pixmap->draw_drawable(gc, lines_pixmap, x-5, y-5, x-5, y-5,
                             4*body_radius+10, 4*body_radius+10);
@@ -356,25 +412,70 @@ bool SimulationCanvas::on_motion_notify_event(GdkEventMotion *event)
       
       draw_plates();
       draw_bodies();
+      break;
     }
-  else
+  case DRAG_STATE_PLATE:
+  case DRAG_STATE_PLATE_A:
+  case DRAG_STATE_PLATE_B:
+    {
+      Gdk::Rectangle rect;
+      PlateBody& plate = plates[active-1024];
+
+      if(plate.pos_a.get_x() < plate.pos_b.get_x())
+      {
+        rect.set_x(static_cast<int>(plate.pos_a.get_x()) - plate_radius);
+        rect.set_width(static_cast<int>(plate.pos_b.get_x()) - static_cast<int>(plate.pos_a.get_x()) + 2*plate_radius);
+      }
+      else
+      {
+        rect.set_x(static_cast<int>(plate.pos_b.get_x()) - plate_radius);
+        rect.set_width(static_cast<int>(plate.pos_a.get_x()) - static_cast<int>(plate.pos_b.get_x()) + 2*plate_radius);
+      }
+     
+      if(plate.pos_a.get_y() < plate.pos_b.get_y())
+      {
+        rect.set_y(static_cast<int>(plate.pos_a.get_y()) - plate_radius);
+        rect.set_height(static_cast<int>(plate.pos_b.get_y()) - static_cast<int>(plate.pos_a.get_y()) + 2*plate_radius);
+      }
+      else
+      {
+        rect.set_y(static_cast<int>(plate.pos_b.get_y()) - plate_radius);
+        rect.set_height(static_cast<int>(plate.pos_a.get_y()) - static_cast<int>(plate.pos_b.get_y()) + 2*plate_radius);
+      }
+
+      if(drag_state == DRAG_STATE_PLATE_A)
+      {
+        plate.pos_a = Vec2(event->x+drag_offset.get_x(), event->y+drag_offset.get_y());
+      }
+      else if(drag_state == DRAG_STATE_PLATE_B)
+      {
+        plate.pos_b = Vec2(event->x+drag_offset.get_x(), event->y+drag_offset.get_y());
+      }
+      else
+      {
+        float sx = plate.pos_b.get_x() - plate.pos_a.get_x();
+        float sy = plate.pos_b.get_y() - plate.pos_a.get_y();
+        plate.pos_a = Vec2(event->x+drag_offset.get_x(), event->y+drag_offset.get_y());
+        plate.pos_b = Vec2(event->x+drag_offset.get_x()+sx, event->y+drag_offset.get_y()+sy);
+      }
+
+      pixmap->draw_drawable(gc, lines_pixmap, rect.get_x(), rect.get_y(), rect.get_x(), rect.get_y(),
+                            rect.get_width(), rect.get_height());
+      get_window()->invalidate_rect(rect, false);
+      
+      draw_plates();
+      draw_bodies();
+
+      break;
+    }
+  default:
     {
       if(!mouse_pressed)
         {
           mouse_over = -1;
-          
-          for(int i=bodies.size()-1; i>=0; i--)
-            {
-              Body& body = bodies[i];
-              int dx = static_cast<int>(body.pos.get_x() - event->x);
-              int dy = static_cast<int>(body.pos.get_y() - event->y);
-              
-              if((dx*dx + dy*dy) < (body_radius*body_radius))
-                {
-                  mouse_over = i;
-                  break;
-                }
-            }
+
+          mouse_over = object_at(static_cast<int>(event->x), static_cast<int>(event->y));
+
           if(old != mouse_over)
             {
               draw_plates();
@@ -385,10 +486,30 @@ bool SimulationCanvas::on_motion_notify_event(GdkEventMotion *event)
         {
           if((abs(static_cast<int>(event->x)-last_click.get_x()) + abs(static_cast<int>(event->y)-last_click.get_y())) > 5)
             {
-              dragging = true;
+              int n = object_at(last_click.get_x(), last_click.get_y());
+              if(n >= 0)
+              {
+                if(n < 1024)
+                {
+                  drag_state = DRAG_STATE_BODY;
+                }
+                else
+                {
+                  drag_state = DRAG_STATE_PLATE;
+                  if(point_hits_plate_a(plates[n-1024], last_click.get_x(), last_click.get_y()))
+                  {
+                    drag_state = DRAG_STATE_PLATE_A;
+                  }
+                  else if(point_hits_plate_b(plates[n-1024], last_click.get_x(), last_click.get_y()))
+                  {
+                    drag_state = DRAG_STATE_PLATE_B;
+                  }
+                }
+              }
             }
         }
     }
+  }
 }
 
 bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
@@ -399,21 +520,40 @@ bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
 
   last_click = Gdk::Point(static_cast<int>(event->x),
                           static_cast<int>(event->y));
-  if(mouse_over >= 0)
-    drag_offset = Gdk::Point(static_cast<int>(bodies[mouse_over].pos.get_x()-event->x),
-                             static_cast<int>(bodies[mouse_over].pos.get_y()-event->y));
 
-  if(selected >= 0)
+  if(mouse_over >= 0)
+  {
+    if(mouse_over < 1024)
+    {
+      drag_offset = Gdk::Point(static_cast<int>(bodies[mouse_over].pos.get_x()-event->x),
+                               static_cast<int>(bodies[mouse_over].pos.get_y()-event->y));
+    }
+    else
+    {
+      if(point_hits_plate_b(plates[mouse_over-1024], static_cast<int>(event->x), static_cast<int>(event->y)))
+      {
+        drag_offset = Gdk::Point(static_cast<int>(plates[mouse_over-1024].pos_b.get_x()-event->x),
+                                 static_cast<int>(plates[mouse_over-1024].pos_b.get_y()-event->y));
+      }
+      else
+      {
+        drag_offset = Gdk::Point(static_cast<int>(plates[mouse_over-1024].pos_a.get_x()-event->x),
+                                 static_cast<int>(plates[mouse_over-1024].pos_a.get_y()-event->y));
+      }
+    }
+  }
+
+  if((active >= 0) && (active < 1024))
     {
       int x, y;
-      x = static_cast<int>(bodies[selected].pos.get_x()) - 2*body_radius;
-      y = static_cast<int>(bodies[selected].pos.get_y()) - 2*body_radius;
+      x = static_cast<int>(bodies[active].pos.get_x()) - 2*body_radius;
+      y = static_cast<int>(bodies[active].pos.get_y()) - 2*body_radius;
       
       pixmap->draw_drawable(gc, lines_pixmap, x-5, y-5, x-5, y-5,
                             4*body_radius+10, 4*body_radius+10);
     }
 
-  selected = mouse_over;
+  active = mouse_over;
   draw_plates();
   draw_bodies();
 }
@@ -421,11 +561,22 @@ bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
 bool SimulationCanvas::on_button_release_event(GdkEventButton *event)
 {
   mouse_pressed = false;
-  if(dragging)
+  if(drag_state)
     {
-      if(selected >= 0)
-        bodies[selected].pos = Vec2(event->x+drag_offset.get_x(), event->y+drag_offset.get_y());
-      dragging = false;
+      if(active >= 0)
+      {
+        switch(drag_state)
+        {
+        case DRAG_STATE_BODY:
+          bodies[active].pos = Vec2(event->x+drag_offset.get_x(), event->y+drag_offset.get_y());
+          break;
+        case DRAG_STATE_PLATE_A:
+        case DRAG_STATE_PLATE_B:
+        default:
+          break;
+        }
+      }
+      drag_state = DRAG_STATE_NONE;
       refresh();
     }
   else
@@ -441,6 +592,88 @@ bool SimulationCanvas::on_key_press_event(GdkEventKey *event)
     {
       delete_selected();
     }
+}
+
+bool SimulationCanvas::point_hits_body(Body& b, int x, int y)
+{
+  int dx = static_cast<int>(b.pos.get_x()) - x;
+  int dy = static_cast<int>(b.pos.get_y()) - y;
+              
+  if((dx*dx + dy*dy) < (body_radius*body_radius))
+    return true;
+
+  return false;
+}
+
+bool SimulationCanvas::point_hits_plate_a(PlateBody& p, int x, int y)
+{
+  int dx = static_cast<int>(p.pos_a.get_x()) - x;
+  int dy = static_cast<int>(p.pos_a.get_y()) - y;
+              
+  if((dx*dx + dy*dy) < (plate_radius*plate_radius))
+    return true;
+
+  return false;
+}
+
+bool SimulationCanvas::point_hits_plate_b(PlateBody& p, int x, int y)
+{
+  int dx = static_cast<int>(p.pos_b.get_x()) - x;
+  int dy = static_cast<int>(p.pos_b.get_y()) - y;
+              
+  if((dx*dx + dy*dy) < (plate_radius*plate_radius))
+    return true;
+
+  return false;
+}
+
+bool SimulationCanvas::point_hits_plate(PlateBody& p, int x, int y)
+{
+  float u, dx, dy;
+
+  float length = (p.pos_b - p.pos_a).length();
+
+  /* When the two points are too close, only point_hits_plate_a / ...plate_b is needed */
+  if(length > 1)
+  {
+    u = ( (x-p.pos_a.get_x())*(p.pos_b.get_x()-p.pos_a.get_x())
+          + (y-p.pos_a.get_y())*(p.pos_b.get_y()-p.pos_a.get_y()) )
+      / (length*length);
+    if((u >= 0) && (u <= 1))
+    {
+      dx = p.pos_a.get_x() + u*(p.pos_b.get_x()-p.pos_a.get_x()) - x;
+      dy = p.pos_a.get_y() + u*(p.pos_b.get_y()-p.pos_a.get_y()) - y;
+
+      if((dx*dx + dy*dy) < (plate_radius*plate_radius))
+        return true;
+    }
+  }
+
+  if(point_hits_plate_a(p, x, y) || point_hits_plate_b(p, x, y))
+    return true;
+
+  return false;
+}
+
+int SimulationCanvas::object_at(int x, int y)
+{
+  for(int i=bodies.size()-1; i>=0; i--)
+  {
+    if(point_hits_body(bodies[i], x, y))
+    {
+      return i;
+    }
+  }
+
+  for(int i=plates.size()-1; i>=0; i--)
+  {
+    if(point_hits_plate(plates[i], x, y))
+    {
+      return (i + 1024);
+    }
+  }
+
+  return -1;
 }
 
 

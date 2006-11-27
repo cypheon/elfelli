@@ -37,6 +37,15 @@ enum BodyState
     BODY_STATES_NUM
   };
 
+enum DragState
+  {
+    DRAG_STATE_NONE = 0,
+    DRAG_STATE_BODY,
+    DRAG_STATE_PLATE,
+    DRAG_STATE_PLATE_A,
+    DRAG_STATE_PLATE_B
+  };
+
 class SimulationCanvas : public Simulation, public Canvas
 {
 public:
@@ -46,6 +55,7 @@ public:
   void refresh();
   void clear();
   bool delete_body(int n);
+  bool delete_plate(int n);
   bool delete_selected();
 
 private:
@@ -55,12 +65,21 @@ private:
   void draw_plates(bool draw_selected=true);
   inline void draw_plate(int n);
 
+  bool point_hits_body(Body& b, int x, int y);
+  bool point_hits_plate_a(PlateBody& p, int x, int y);
+  bool point_hits_plate_b(PlateBody& p, int x, int y);
+  bool point_hits_plate(PlateBody& p, int x, int y);
+  int object_at(int x, int y);
+
   static char *color_names[];
 
-  int body_radius;
+  int body_radius, plate_radius;
 
-  bool mouse_pressed, dragging;
-  int mouse_over, selected;
+  DragState drag_state; 
+  int active;
+
+  bool mouse_pressed;
+  int mouse_over;
   Gdk::Point last_click, drag_offset;
 
   Glib::RefPtr<Gdk::GC> gc, gc_black, gc_white, gc_selection, gc_platebody;

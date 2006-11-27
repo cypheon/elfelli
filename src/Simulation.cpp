@@ -177,7 +177,7 @@ bool Simulation::step(Particle& p, float dtime)
 
 void Simulation::add_body(const Vec2& v, float charge)
 {
-  /* Numbers greter than 1024 are reserved for PlateBodies. */
+  /* Numbers greater than 1024 are reserved for PlateBodies. */
   if(bodies.size() >= 1024) return;
 
   Body b;
