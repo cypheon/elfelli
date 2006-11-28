@@ -125,15 +125,6 @@ Vec2 Vec2::normalize() const
 }
 
 
-inline float norm(float x)
-{
-  if(x>0)
-    return 1.0;
-  if(x<0)
-    return -1.0;
-  return 0.0;
-}
-
 Vec2 Simulation::force_at(const Vec2& pos, float charge)
 {
   Vec2 f(0,0);
@@ -146,6 +137,32 @@ Vec2 Simulation::force_at(const Vec2& pos, float charge)
 
       f -= t * (charge * body.charge);
     }
+
+  for(int i=0; i<plates.size(); i++)
+    {
+      PlateBody& plate = plates[i];
+
+      float ax, ay, bx, by;
+      Vec2 v;
+      ax = plate.pos_a.get_x() - pos.get_x();
+      ay = plate.pos_a.get_y() - pos.get_y();
+      bx = plate.pos_b.get_x() - plate.pos_a.get_x();
+      by = plate.pos_b.get_y() - plate.pos_a.get_y();
+
+      v.set_x((2*by*atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))+bx*log(by*by+2*ay*by+bx*bx+2*ax*bx+ay*ay+ax*ax)-2*by*
+               atan((ay*by+ax*bx)/(ax*by-ay*bx))-log(ay*ay+ax*ax)*bx)/((2*by*by+2*bx*bx)*(atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx)-atan((ay*by+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx))));
+
+      v.set_y((-2*bx*atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))+by*log(by*by+2*ay*by+bx*bx+2*ax*bx+ay*ay+ax*ax)+2*bx*
+               atan((ay*by+ax*bx)/(ax*by-ay*bx))-log(ay*ay+ax*ax)*by)/((2*by*by+2*bx*bx)*(atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx)-atan((ay*by+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx))));
+
+      float dist = v.length();
+      Vec2 t = (v.normalize())/(dist*dist);
+
+      // float length = sqrt(bx*bx+by*by)/30;
+      // f -= t * (charge * plate.charge/length);
+      f -= t * (charge * plate.charge);
+    }
+
   return f;
 }
 
@@ -169,6 +186,27 @@ bool Simulation::step(Particle& p, float dtime)
       Vec2& pos = bodies[i].pos;
       if(p.pos.distance(pos) <= 5)
         return false;
+    }
+
+  for(int i=0; i<plates.size(); i++)
+    {
+      PlateBody& pl = plates[i];
+      float u, dx, dy;
+
+      float length = (pl.pos_b - pl.pos_a).length();
+
+      u = ( (p.pos.get_x()-pl.pos_a.get_x())*(pl.pos_b.get_x()-pl.pos_a.get_x())
+            + (p.pos.get_y()-pl.pos_a.get_y())*(pl.pos_b.get_y()-pl.pos_a.get_y()) )
+      / (length*length);
+    if((u >= 0) && (u <= 1))
+    {
+      dx = pl.pos_a.get_x() + u*(pl.pos_b.get_x()-pl.pos_a.get_x()) - p.pos.get_x();
+      dy = pl.pos_a.get_y() + u*(pl.pos_b.get_y()-pl.pos_a.get_y()) - p.pos.get_y();
+
+      if((dx*dx + dy*dy) <= 9)
+        return false;
+    }
+
     }
 
   p.n++;
@@ -214,7 +252,7 @@ void Simulation::run()
           l.add(p.pos);
           
           p.vel = (Vec2(cos(angle),sin(angle)) * START_VEL);
-          p.charge = norm(body.charge);
+          p.charge = body.charge;
           p.move();
           l.add(p.pos);
           while(step(p, STEPSIZE))
