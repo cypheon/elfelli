@@ -11,7 +11,7 @@ body {font-family: "Bitstream Vera Sans", Helvetica, Arial, Sans; font-size: 9pt
 a:link, a:visited {text-decoration: none; color: #00f; border-bottom: 1px dotted #999; background-color: transparent;}
 a:hover {color: #009; background-color: #eee;}
 
-a.imglink {border: none;}
+a.imglink {border: none; background-color: transparent;}
 a.imglink img {border: none;}
 
 #content {padding-left: 2em; padding-right: 2em;}
