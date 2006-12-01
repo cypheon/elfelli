@@ -156,11 +156,10 @@ Vec2 Simulation::force_at(const Vec2& pos, float charge)
                atan((ay*by+ax*bx)/(ax*by-ay*bx))-log(ay*ay+ax*ax)*by)/((2*by*by+2*bx*bx)*(atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx)-atan((ay*by+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx))));
 
       float dist = v.length();
+      float length = sqrt(bx*bx+by*by)/30;
       Vec2 t = (v.normalize())/(dist*dist);
 
-      // float length = sqrt(bx*bx+by*by)/30;
-      // f -= t * (charge * plate.charge/length);
-      f -= t * (charge * plate.charge);
+      f -= t * (charge * plate.charge/length);
     }
 
   return f;
@@ -175,7 +174,7 @@ bool Simulation::step(Particle& p, float dtime)
 
   if(p.n > (2000/m))
     {
-      if(p.pos.length() > 1000)
+      if(p.pos.length() > 2000)
         return false;
       if(p.n > 10000)
         return false;
