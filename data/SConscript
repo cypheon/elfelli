@@ -5,6 +5,8 @@ Import('env paths targets')
 data_files = ['elfelli-logo.svg',
               'negative.svg',
               'positive.svg',
+              'negative-plate.svg',
+              'positive-plate.svg',
               'ui.xml']
 
 if 'install' in targets:

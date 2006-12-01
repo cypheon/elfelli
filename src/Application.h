@@ -54,6 +54,8 @@ class Application
   bool on_expose(GdkEventExpose *event);
   void on_add_positive_body_clicked();
   void on_add_negative_body_clicked();
+  void on_add_positive_plate_clicked();
+  void on_add_negative_plate_clicked();
 
   void on_about_activate();
   void on_quit_activate();

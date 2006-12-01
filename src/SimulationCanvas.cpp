@@ -58,13 +58,6 @@ void SimulationCanvas::clear()
   plates.clear();
   paths.clear();
 
-  PlateBody p;
-  p.pos_a = Vec2(100, 100);
-  p.pos_b = Vec2(150, 200);
-  p.charge = -4;
-
-  plates.push_back(p);
-
   mouse_over = active = -1;
   drag_state = DRAG_STATE_NONE;
 

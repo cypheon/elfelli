@@ -224,6 +224,15 @@ void Simulation::add_body(const Vec2& v, float charge)
   bodies.push_back(b);
 };
 
+void Simulation::add_plate(const Vec2& a, const Vec2& b, float charge)
+{
+  PlateBody p;
+  p.charge = charge;
+  p.pos_a = a;
+  p.pos_b = b;
+  plates.push_back(p);
+};
+
 void Simulation::run()
 {
   profile_func_start(__PRETTY_FUNCTION__);

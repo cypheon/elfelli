@@ -114,14 +114,34 @@ void Application::on_quit_activate()
 void Application::on_add_positive_body_clicked()
 {
   sim_canvas.add_body(Vec2(rand()%sim_canvas.get_width(), rand()%sim_canvas.get_height()), 4);
-
   sim_canvas.refresh();
 }
 
 void Application::on_add_negative_body_clicked()
 {
   sim_canvas.add_body(Vec2(rand()%sim_canvas.get_width(), rand()%sim_canvas.get_height()), -4);
+  sim_canvas.refresh();
+}
 
+void Application::on_add_positive_plate_clicked()
+{
+  Vec2 a(rand() % (sim_canvas.get_width() - 200)+100, rand() % (sim_canvas.get_height() - 200)+100);
+
+  float angle = 2*PI*((float)rand()/RAND_MAX);
+  Vec2 b(100*cos(angle), 100*sin(angle));
+
+  sim_canvas.add_plate(a, a+b, 4);
+  sim_canvas.refresh();
+}
+
+void Application::on_add_negative_plate_clicked()
+{
+  Vec2 a(rand() % (sim_canvas.get_width() - 200)+100, rand() % (sim_canvas.get_height() - 200)+100);
+
+  float angle = 2*PI*((float)rand()/RAND_MAX);
+  Vec2 b(100*cos(angle), 100*sin(angle));
+
+  sim_canvas.add_plate(a, a+b, -4);
   sim_canvas.refresh();
 }
 
@@ -186,6 +206,8 @@ bool Application::setup_ui_actions()
   action_group->add( Action::create("Clear", Stock::CLEAR) , sigc::mem_fun(*this, &Application::reset_simulation));
   action_group->add( Action::create("AddNegative", _("Negative body")) , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
   action_group->add( Action::create("AddPositive", _("Positive body")) , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
+  action_group->add( Action::create("AddNegativePlate", _("Negative plate")) , sigc::mem_fun(*this, &Application::on_add_negative_plate_clicked));
+  action_group->add( Action::create("AddPositivePlate", _("Positive plate")) , sigc::mem_fun(*this, &Application::on_add_positive_plate_clicked));
 
   action_group->add( Action::create("MenuHelp", _("_Help")) );
   action_group->add( Action::create("About", Stock::ABOUT) , sigc::mem_fun(*this, &Application::on_about_activate));
@@ -225,12 +247,28 @@ bool Application::setup_ui_actions()
       dynamic_cast<ToolButton *>(ui_manager->get_widget("/ToolBar/AddNegative"))->set_icon_widget(*dynamic_cast<Widget *>(img));
     }
 
-  if (ui_manager->get_widget("/ToolBar/AddNegative"))
+  if (ui_manager->get_widget("/ToolBar/AddPositive"))
     {
       pixbuf = Gdk::Pixbuf::create_from_file(find_datafile("positive.svg"), w, h);
       img = manage(new Image(pixbuf));
       img->show();
       dynamic_cast<ToolButton *>(ui_manager->get_widget("/ToolBar/AddPositive"))->set_icon_widget(*dynamic_cast<Widget *>(img));
+    }
+
+  if (ui_manager->get_widget("/ToolBar/AddNegativePlate"))
+    {
+      pixbuf = Gdk::Pixbuf::create_from_file(find_datafile("negative-plate.svg"), w, h);
+      img = manage(new Image(pixbuf));
+      img->show();
+      dynamic_cast<ToolButton *>(ui_manager->get_widget("/ToolBar/AddNegativePlate"))->set_icon_widget(*dynamic_cast<Widget *>(img));
+    }
+
+  if (ui_manager->get_widget("/ToolBar/AddPositivePlate"))
+    {
+      pixbuf = Gdk::Pixbuf::create_from_file(find_datafile("positive-plate.svg"), w, h);
+      img = manage(new Image(pixbuf));
+      img->show();
+      dynamic_cast<ToolButton *>(ui_manager->get_widget("/ToolBar/AddPositivePlate"))->set_icon_widget(*dynamic_cast<Widget *>(img));
     }
 
   return true;
