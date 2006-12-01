@@ -259,9 +259,8 @@ void Simulation::run()
           p.pos = body.pos;
           l.add(p.pos);
           
-          p.vel = (Vec2(cos(angle),sin(angle)) * START_VEL);
+          p.pos += Vec2(cos(angle),sin(angle))*START_VEL;
           p.charge = body.charge;
-          p.move();
           l.add(p.pos);
           while(step(p, STEPSIZE))
             {
@@ -270,6 +269,40 @@ void Simulation::run()
           l.add(p.pos);
 
           result.push_back(l);
+        }
+    }
+
+  for(int i=0; i<plates.size(); i++)
+    {
+      PlateBody& plate = plates[i];
+      if(plate.charge == 0)
+        continue;
+      float n = 2*fabs(plate.charge);
+      Vec2 diff = plate.pos_b - plate.pos_a;
+      for(float pos=0; pos<=1.0; pos+=1/n)
+        {
+          int s = 1;
+          do
+          {
+            s *= -1;
+            p.n=0;
+            l.clear();
+
+            p.pos = plate.pos_a + diff*pos;
+            l.add(p.pos);
+
+            p.pos += Vec2(diff.get_y(), -diff.get_x()).normalize()*(s*5);
+            p.charge = plate.charge;
+
+            l.add(p.pos);
+            while(step(p, STEPSIZE))
+            {
+              l.add(p.pos);
+            }
+            l.add(p.pos);
+
+            result.push_back(l);
+          } while(s == -1);
         }
     }
 
