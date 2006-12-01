@@ -29,9 +29,9 @@ using namespace Gtk;
 namespace Elfelli
 {
 
-const std::string Application::appname = "Elfelli";
-const std::string Application::version = "0.1";
-const std::string Application::datadir = DATADIR;
+const std::string Application::appname("Elfelli");
+const std::string Application::version("0.2");
+const std::string Application::datadir(DATADIR);
 
 Application::Application(int argc, char **argv):
   gtk_main(argc, argv),

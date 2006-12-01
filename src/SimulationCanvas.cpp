@@ -293,7 +293,6 @@ inline void SimulationCanvas::draw_plate(int n)
   }
 
   get_window()->invalidate_rect(rect, false);
-
 }
 
 void SimulationCanvas::draw_plates(bool draw_selected)
@@ -313,19 +312,31 @@ void SimulationCanvas::draw_plates(bool draw_selected)
     {
       const PlateBody& plate = plates[active-1024];
       draw_plate(active-1024);
-
-      /*
-      pixmap->draw_arc(gc_selection, false,
-                       static_cast<int>(body.pos.get_x() - body_radius*2),
-                       static_cast<int>(body.pos.get_y() - body_radius*2),
-                       body_radius*4, body_radius*4, 0, (360*64));
-
       Gdk::Rectangle rect;
-      rect.set_x(static_cast<int>(body.pos.get_x() - body_radius*2)-5);
-      rect.set_y(static_cast<int>(body.pos.get_y() - body_radius*2)-5);
-      rect.set_width(body_radius*4+10);
-      rect.set_height(body_radius*4+10);
-      get_window()->invalidate_rect(rect, false);*/
+
+      pixmap->draw_arc(gc_selection, true,
+                       static_cast<int>(plate.pos_a.get_x() - plate_radius),
+                       static_cast<int>(plate.pos_a.get_y() - plate_radius),
+                       plate_radius*2, plate_radius*2, 0, (360*64));
+
+      
+      rect.set_x(static_cast<int>(plate.pos_a.get_x() - plate_radius)-5);
+      rect.set_y(static_cast<int>(plate.pos_a.get_y() - plate_radius)-5);
+      rect.set_width(plate_radius*2+10);
+      rect.set_height(plate_radius*2+10);
+      get_window()->invalidate_rect(rect, false);
+
+      pixmap->draw_arc(gc_selection, true,
+                       static_cast<int>(plate.pos_b.get_x() - plate_radius),
+                       static_cast<int>(plate.pos_b.get_y() - plate_radius),
+                       plate_radius*2, plate_radius*2, 0, (360*64));
+
+      
+      rect.set_x(static_cast<int>(plate.pos_b.get_x() - plate_radius)-5);
+      rect.set_y(static_cast<int>(plate.pos_b.get_y() - plate_radius)-5);
+      rect.set_width(plate_radius*2+10);
+      rect.set_height(plate_radius*2+10);
+      get_window()->invalidate_rect(rect, false);
     }
 }
 
@@ -544,6 +555,22 @@ bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
       
       pixmap->draw_drawable(gc, lines_pixmap, x-5, y-5, x-5, y-5,
                             4*body_radius+10, 4*body_radius+10);
+    }
+
+  if(active >= 1024)
+    {
+      int x, y;
+      x = static_cast<int>(plates[active-1024].pos_a.get_x()) - plate_radius;
+      y = static_cast<int>(plates[active-1024].pos_a.get_y()) - plate_radius;
+
+      pixmap->draw_drawable(gc, lines_pixmap, x-2, y-2, x-2, y-2,
+                            2*plate_radius+4, 2*plate_radius+4);
+
+      x = static_cast<int>(plates[active-1024].pos_b.get_x()) - plate_radius;
+      y = static_cast<int>(plates[active-1024].pos_b.get_y()) - plate_radius;
+
+      pixmap->draw_drawable(gc, lines_pixmap, x-2, y-2, x-2, y-2,
+                            2*plate_radius+4, 2*plate_radius+4);
     }
 
   active = mouse_over;
