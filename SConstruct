@@ -40,12 +40,12 @@ if not conf.PkgConfig('gtkmm-2.4', '2.8'):
         Exit(1)
 
 if env['profiling']:
-	env.AppendUnique(CPPFLAGS='-DPROFILING ')
+	env.AppendUnique(CPPDEFINES='PROFILING ')
 
 if env['debug']:
-	env.AppendUnique(CXXFLAGS=['-g', '-O0'], CPPFLAGS='-DDEBUG ')
+	env.AppendUnique(CXXFLAGS=['-g', '-O0'], CPPDEFINES='DEBUG')
 else:
-	env.AppendUnique(CXXFLAGS=['-O3'], CPPFLAGS='-DNDEBUG ')
+	env.AppendUnique(CXXFLAGS=['-O3'], CPPDEFINES='NDEBUG')
 
 
 
