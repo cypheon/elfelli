@@ -66,7 +66,7 @@ class Application
   Gtk::Window main_win;
   Gtk::Statusbar sbar;
 
-  Gtk::FileChooserDialog save_dlg;
+  Gtk::FileChooserDialog save_dlg, open_dlg;
 
   Glib::RefPtr<Gtk::ActionGroup> action_group;
   Glib::RefPtr<Gtk::UIManager> ui_manager;

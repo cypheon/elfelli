@@ -36,7 +36,8 @@ const std::string Application::datadir(DATADIR);
 
 Application::Application(int argc, char **argv):
   gtk_main(argc, argv),
-  save_dlg(main_win, "", FILE_CHOOSER_ACTION_SAVE)
+  save_dlg(main_win, "", FILE_CHOOSER_ACTION_SAVE),
+  open_dlg(main_win, "", FILE_CHOOSER_ACTION_OPEN)
 {
   setup_gettext();
   build_gui();
@@ -99,7 +100,7 @@ void Application::on_export_png_activate()
     {
       filename = save_dlg.get_filename();
 #ifdef DEBUG
-      std::cout << "Exporting PNG to file `" << filename << "'." << std::endl;
+      std::cerr << "Exporting PNG to file `" << filename << "'." << std::endl;
 #endif // DEBUG
       sim_canvas.save(filename, "png");
     }
@@ -109,17 +110,33 @@ void Application::on_export_png_activate()
 
 void Application::on_open_activate()
 {
-  XmlLoader loader;
+  std::string filename = "";
 
-  Simulation *tmp_sim = new Simulation;
+  open_dlg.set_title(_("Open scene"));
 
-  if(loader.load("test.xml", tmp_sim) == 0)
-  {
-    sim_canvas = *tmp_sim;
-    sim_canvas.refresh();
-  }
+  int result = open_dlg.run();
+  if(result == RESPONSE_OK)
+    {
+      filename = open_dlg.get_filename();
+      
+#ifdef DEBUG
+      std::cerr << "Loading file `" << filename << "'." << std::endl;
+#endif // DEBUG
 
-  delete tmp_sim;
+      XmlLoader loader;
+
+      Simulation *tmp_sim = new Simulation;
+
+      if(loader.load(filename.c_str(), tmp_sim) == 0)
+      {
+        sim_canvas = *tmp_sim;
+        sim_canvas.refresh();
+      }
+
+      delete tmp_sim;
+    }
+
+  open_dlg.hide();
 }
 
 void Application::on_quit_activate()
@@ -295,12 +312,24 @@ void Application::setup_file_chooser_dialogs()
   save_dlg.set_do_overwrite_confirmation();
   save_dlg.add_button(Stock::CANCEL, RESPONSE_CANCEL);
   save_dlg.add_button(Stock::SAVE, RESPONSE_OK);
+
+
+  FileFilter elfelli_xml, all;
+  elfelli_xml.set_name(_("Elfelli XML (*.elfelli)"));
+  elfelli_xml.add_pattern("*.elfelli");
+
+  all.set_name(_("All files"));
+  all.add_pattern("*");
+
+  open_dlg.add_button(Stock::CANCEL, RESPONSE_CANCEL);
+  open_dlg.add_button(Stock::OPEN, RESPONSE_OK);
+  open_dlg.add_filter(elfelli_xml);
+  open_dlg.add_filter(all);
 }
 
 bool Application::build_gui()
 {
   VBox *vbox1 = manage(new VBox);
-  HBox *hbox1 = manage(new HBox);
 
   main_win.set_title(appname + " " + version);
   main_win.add(*vbox1);
@@ -314,18 +343,6 @@ bool Application::build_gui()
 
   vbox1->pack_start(sim_canvas);
   sim_canvas.set_size_request(640, 480);
-
-  //vbox1->pack_start(*hbox1, false, false);
-
-  Button *button = manage(new Button("Neuer positiver Körper"));
-  hbox1->pack_end(*button, false, false);
-  button->signal_clicked().connect(sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
-  button->set_border_width(1);
-
-  button = manage(new Button("Neuer negativer Körper"));
-  hbox1->pack_end(*button, false, false);
-  button->signal_clicked().connect(sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
-  button->set_border_width(1);
 
   vbox1->pack_start(sbar, false, false);
 
