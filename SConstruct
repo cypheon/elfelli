@@ -2,6 +2,9 @@
 
 import tools.Gettext
 
+def DefQuote(str):
+        return r'\"%s\"' % str
+
 def CheckPkgConfig(context, min_version='0'):
         context.Message('Checking for pkgconfig... ')
         r = context.TryAction('pkg-config --atleast-pkgconfig-version %s' % min_version)
@@ -35,27 +38,25 @@ conf = env.Configure(custom_tests =
 
 if not conf.CheckPkgConfig('0.15'):
         Exit(1)
-
 if not conf.PkgConfig('gtkmm-2.4', '2.8'):
         Exit(1)
 
 if env['profiling']:
-	env.AppendUnique(CPPDEFINES='PROFILING ')
+	env.AppendUnique(CPPDEFINES='PROFILING')
 
 if env['debug']:
 	env.AppendUnique(CXXFLAGS=['-g', '-O0'], CPPDEFINES='DEBUG')
 else:
 	env.AppendUnique(CXXFLAGS=['-O3'], CPPDEFINES='NDEBUG')
 
+paths = {"bindir": env['prefix'] + '/bin',
+         "datadir": env['prefix'] + '/share/elfelli',
+         "localedir": env['prefix'] + '/share/locale'}
+env.Dictionary().update(paths)
 
+env.AppendUnique(CPPDEFINES=[('DATADIR', DefQuote(env['datadir'])),
+                             ('LOCALEDIR', DefQuote(env['localedir']))])
 
-paths = {
-        "bindir": env['prefix']+'/bin',
-        "datadir": env['prefix']+'/share/elfelli',
-        "localedir": env['prefix']+'/share/locale'}
-
-env.AppendUnique(CPPFLAGS=r'-DDATADIR=\"%s\" '%paths['datadir'])
-env.AppendUnique(CPPFLAGS=r'-DLOCALEDIR=\"%s\" '%paths['localedir'])
 env.Alias("install", paths.values())
 
 Help("""
@@ -65,5 +66,5 @@ scons -h     Show this help.
 
 Options:""" + opts.GenerateHelpText(env))
 
-Export('env paths targets')
+Export('env')
 SConscript(['src/SConscript', 'data/SConscript', 'po/SConscript'])

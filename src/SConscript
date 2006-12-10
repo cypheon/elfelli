@@ -1,6 +1,6 @@
 # -*- Python -*-
 
-Import('env paths targets')
+Import('env')
 
 elfelli_sources = ['Application.cpp',
                    'Canvas.cpp',
@@ -10,5 +10,4 @@ elfelli_sources = ['Application.cpp',
 
 elfelli = env.Program('elfelli', elfelli_sources)
 
-if 'install' in targets:
-    env.Install(paths['bindir'], elfelli)
+env.Install(env['bindir'], elfelli)
