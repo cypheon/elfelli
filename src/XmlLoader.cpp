@@ -70,8 +70,8 @@ int XmlLoader::load(const char *filename, Simulation *target)
   std::ifstream in(filename);
   if(!in)
     return 1;
-
   in.read(reinterpret_cast<char *>(buf), MAX_FILE_SIZE);
+  in.close();
 
   XML_SetStartElementHandler(parser, XmlLoader::start_element);
   XML_ParseBuffer(parser, std::strlen(reinterpret_cast<char *>(buf)), 1);
