@@ -1,6 +1,6 @@
 # -*- Python -*-
 
-import os
+import tools.Gettext
 
 def CheckPkgConfig(context, min_version='0'):
         context.Message('Checking for pkgconfig... ')
@@ -15,7 +15,7 @@ def PkgConfig(context, pkg, version, version_op='>='):
 	context.Result(True)
 	return True
 
-env = Environment()
+env = Environment(BUILDERS={'MO': tools.Gettext.GettextMOBuilder})
 
 opts = Options('elfelli.conf')
 opts.Add(BoolOption('debug', 'Set to build debug version', 1))
@@ -54,20 +54,6 @@ paths = {
         "datadir": env['prefix']+'/share/elfelli',
         "localedir": env['prefix']+'/share/locale'}
 
-if 'install' in targets:
-        try:
-                for path in paths.values():
-                        if not os.path.lexists(path):
-                                os.makedirs(path, 0755)
-                        elif not (os.path.isdir(path) and os.access(path, os.W_OK or os.X_OK)):
-                                print 'Error: \'%s\' is not writable!' % path
-                                Exit(1)
-        except OSError,e:
-                print 'Error %d: %s' % (e[0],e[1])
-                Exit(1)
-        os.system('./i18n.py install %s' % paths['localedir'])
-
-
 env.AppendUnique(CPPFLAGS=r'-DDATADIR=\"%s\" '%paths['datadir'])
 env.AppendUnique(CPPFLAGS=r'-DLOCALEDIR=\"%s\" '%paths['localedir'])
 env.Alias("install", paths.values())
@@ -80,4 +66,4 @@ scons -h     Show this help.
 Options:""" + opts.GenerateHelpText(env))
 
 Export('env paths targets')
-SConscript(['src/SConscript', 'data/SConscript'])
+SConscript(['src/SConscript', 'data/SConscript', 'po/SConscript'])

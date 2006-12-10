@@ -1,0 +1,14 @@
+# -*- Python -*-
+
+from glob import glob
+
+Import('env paths targets')
+
+locales = map(lambda str: str[:-3], glob('*.po'))
+for locale in locales:
+    env.MO('locale/%s/LC_MESSAGES/elfelli' % locale, locale)
+
+if 'install' in targets:
+    for locale in locales:
+        env.InstallAs('%s/%s/LC_MESSAGES/elfelli.mo' % (paths['localedir'], locale),
+                      'locale/%s/LC_MESSAGES/elfelli.mo' % locale)
