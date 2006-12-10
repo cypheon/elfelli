@@ -100,10 +100,13 @@ class Simulation
 {
 public:
   Vec2 force_at(const Vec2& pos, float charge);
-  void reset(){bodies.clear();result.clear();};
+  void reset(){bodies.clear();plates.clear();result.clear();};
 
   void add_body(const Vec2& v, float charge);
   void add_plate(const Vec2& a, const Vec2& b, float charge);
+
+  const std::vector<Body> get_bodies() const{return bodies;};
+  const std::vector<PlateBody> get_plates() const{return plates;};
 
   Body& operator[](int n){return bodies[n];};
   int n_bodies(){return bodies.size();};

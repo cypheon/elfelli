@@ -52,6 +52,8 @@ public:
   SimulationCanvas();
   ~SimulationCanvas();
 
+  void operator=(const Simulation& sim);
+
   void refresh();
   void clear();
   bool delete_body(int n);

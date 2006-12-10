@@ -46,6 +46,17 @@ SimulationCanvas::~SimulationCanvas()
 {
 }
 
+void SimulationCanvas::operator=(const Simulation& sim)
+{
+  bodies = sim.get_bodies();
+  plates = sim.get_plates();
+
+  drag_state = DRAG_STATE_NONE;
+  mouse_pressed = false;
+  mouse_over = -1;
+  active = -1;
+}
+
 void SimulationCanvas::refresh()
 {
   run();

@@ -19,6 +19,7 @@
 
 #include "Application.h"
 #include "Simulation.h"
+#include "XmlLoader.h"
 
 using namespace Gtk;
 
@@ -104,6 +105,21 @@ void Application::on_export_png_activate()
     }
 
   save_dlg.hide();
+}
+
+void Application::on_open_activate()
+{
+  XmlLoader loader;
+
+  Simulation *tmp_sim = new Simulation;
+
+  if(loader.load("test.xml", tmp_sim) == 0)
+  {
+    sim_canvas = *tmp_sim;
+    sim_canvas.refresh();
+  }
+
+  delete tmp_sim;
 }
 
 void Application::on_quit_activate()
@@ -196,7 +212,7 @@ bool Application::setup_ui_actions()
 
   action_group->add( Action::create("MenuScene", _("_Scene")) );
   action_group->add( Action::create("New", Stock::NEW) , sigc::mem_fun(*this, &Application::reset_simulation));
-  action_group->add( Action::create("Open", Stock::OPEN) );
+  action_group->add( Action::create("Open", Stock::OPEN) , sigc::mem_fun(*this, &Application::on_open_activate));
   action_group->add( Action::create("SaveAs", Stock::SAVE_AS) );
   action_group->add( Action::create("ExportPNG", _("Export _PNG")) , sigc::mem_fun(*this, &Application::on_export_png_activate));
   action_group->add( Action::create("ExportSVG", _("Export S_VG")) );

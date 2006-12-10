@@ -60,6 +60,7 @@ class Application
   void on_about_activate();
   void on_quit_activate();
   void on_export_png_activate();
+  void on_open_activate();
 
   Gtk::Main gtk_main;
   Gtk::Window main_win;
