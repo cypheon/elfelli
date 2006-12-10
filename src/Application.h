@@ -31,7 +31,7 @@ namespace Elfelli
 
 class Application
 {
- public:
+public:
   Application(int argc, char **argv);
   int main();
   void quit();
@@ -42,7 +42,7 @@ class Application
   static const std::string version;
   static const std::string datadir;
 
- private:
+private:
   void setup_gettext();
 
   bool build_gui();
@@ -61,12 +61,14 @@ class Application
   void on_quit_activate();
   void on_export_png_activate();
   void on_open_activate();
+  void on_save_activate();
 
   Gtk::Main gtk_main;
   Gtk::Window main_win;
   Gtk::Statusbar sbar;
 
-  Gtk::FileChooserDialog save_dlg, open_dlg;
+  Gtk::FileChooserDialog export_png_dlg, save_dlg, open_dlg;
+  Gtk::FileFilter elfelli_xml, all;
 
   Glib::RefPtr<Gtk::ActionGroup> action_group;
   Glib::RefPtr<Gtk::UIManager> ui_manager;

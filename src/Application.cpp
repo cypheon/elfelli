@@ -20,10 +20,12 @@
 #include "Application.h"
 #include "Simulation.h"
 #include "XmlLoader.h"
+#include "XmlWriter.h"
 
 using namespace Gtk;
 
 #include <vector>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 
@@ -36,6 +38,7 @@ const std::string Application::datadir(DATADIR);
 
 Application::Application(int argc, char **argv):
   gtk_main(argc, argv),
+  export_png_dlg(main_win, "", FILE_CHOOSER_ACTION_SAVE),
   save_dlg(main_win, "", FILE_CHOOSER_ACTION_SAVE),
   open_dlg(main_win, "", FILE_CHOOSER_ACTION_OPEN)
 {
@@ -93,26 +96,22 @@ void Application::on_export_png_activate()
 {
   std::string filename = "";
 
-  save_dlg.set_title(_("Export PNG"));
-
-  int result = save_dlg.run();
+  int result = export_png_dlg.run();
   if(result == RESPONSE_OK)
     {
-      filename = save_dlg.get_filename();
+      filename = export_png_dlg.get_filename();
 #ifdef DEBUG
       std::cerr << "Exporting PNG to file `" << filename << "'." << std::endl;
 #endif // DEBUG
       sim_canvas.save(filename, "png");
     }
 
-  save_dlg.hide();
+  export_png_dlg.hide();
 }
 
 void Application::on_open_activate()
 {
   std::string filename = "";
-
-  open_dlg.set_title(_("Open scene"));
 
   int result = open_dlg.run();
   if(result == RESPONSE_OK)
@@ -137,6 +136,49 @@ void Application::on_open_activate()
     }
 
   open_dlg.hide();
+}
+
+void Application::on_save_activate()
+{
+  std::string filename = "";
+
+  while(1){
+    int result = save_dlg.run();
+    if(result == RESPONSE_OK)
+    {
+      filename = save_dlg.get_filename();
+      if(save_dlg.get_filter())
+      {
+        if(save_dlg.get_filter()->get_name() == _("Elfelli XML (*.elfelli)"))
+        {
+          if(filename.find_last_of('.') == std::string::npos)
+          {
+            filename += ".elfelli";
+          }
+        }
+      }
+
+      char buf[1024];
+      std::snprintf(buf, 1024, "A file named \"%s\" already exists. Do you want to overwrite it?", Glib::filename_display_basename(filename).c_str());
+
+      MessageDialog overwrite_dlg(main_win, buf, false, MESSAGE_WARNING, BUTTONS_OK_CANCEL, true);
+      if(!Glib::file_test(filename, Glib::FILE_TEST_EXISTS)
+         || (overwrite_dlg.run() == RESPONSE_OK))
+      {
+#ifdef DEBUG
+        std::cerr << "Saving file `" << filename << "'." << std::endl;
+#endif // DEBUG
+
+        XmlWriter::write(filename, &sim_canvas);
+        break;
+      }
+    }
+    else
+    {
+      break;
+    }
+  }
+  save_dlg.hide();
 }
 
 void Application::on_quit_activate()
@@ -230,7 +272,7 @@ bool Application::setup_ui_actions()
   action_group->add( Action::create("MenuScene", _("_Scene")) );
   action_group->add( Action::create("New", Stock::NEW) , sigc::mem_fun(*this, &Application::reset_simulation));
   action_group->add( Action::create("Open", Stock::OPEN) , sigc::mem_fun(*this, &Application::on_open_activate));
-  action_group->add( Action::create("SaveAs", Stock::SAVE_AS) );
+  action_group->add( Action::create("SaveAs", Stock::SAVE_AS) , sigc::mem_fun(*this, &Application::on_save_activate));
   action_group->add( Action::create("ExportPNG", _("Export _PNG")) , sigc::mem_fun(*this, &Application::on_export_png_activate));
   action_group->add( Action::create("ExportSVG", _("Export S_VG")) );
   action_group->add( Action::create("Quit", Stock::QUIT) , sigc::mem_fun(*this, &Application::quit));
@@ -309,19 +351,27 @@ bool Application::setup_ui_actions()
 
 void Application::setup_file_chooser_dialogs()
 {
-  save_dlg.set_do_overwrite_confirmation();
-  save_dlg.add_button(Stock::CANCEL, RESPONSE_CANCEL);
-  save_dlg.add_button(Stock::SAVE, RESPONSE_OK);
+  export_png_dlg.set_do_overwrite_confirmation();
+  export_png_dlg.add_button(Stock::CANCEL, RESPONSE_CANCEL);
+  export_png_dlg.add_button(Stock::SAVE, RESPONSE_OK);
+  export_png_dlg.set_title(_("Export PNG"));
 
 
-  FileFilter elfelli_xml, all;
   elfelli_xml.set_name(_("Elfelli XML (*.elfelli)"));
   elfelli_xml.add_pattern("*.elfelli");
 
   all.set_name(_("All files"));
   all.add_pattern("*");
 
+  save_dlg.set_title(_("Save scene"));
+  save_dlg.add_button(Stock::CANCEL, RESPONSE_CANCEL);
+  save_dlg.add_button(Stock::SAVE, RESPONSE_OK);
+  save_dlg.add_filter(elfelli_xml);
+  save_dlg.add_filter(all);
+
+
   open_dlg.add_button(Stock::CANCEL, RESPONSE_CANCEL);
+  open_dlg.set_title(_("Open scene"));
   open_dlg.add_button(Stock::OPEN, RESPONSE_OK);
   open_dlg.add_filter(elfelli_xml);
   open_dlg.add_filter(all);
