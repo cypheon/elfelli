@@ -9,5 +9,5 @@ elfelli_sources = ['Application.cpp',
                    'Main.cpp']
 
 elfelli = env.Program('elfelli', elfelli_sources)
-
-env.Install(env['bindir'], elfelli)
+Default(elfelli)
+env.Install(env['destdir']+env['bindir'], elfelli)

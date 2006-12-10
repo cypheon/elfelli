@@ -24,6 +24,7 @@ opts = Options('elfelli.conf')
 opts.Add(BoolOption('debug', 'Set to build debug version', 1))
 opts.Add(BoolOption('profiling', 'Set to enable profiling', 0))
 opts.Add(('prefix', 'Directory to install elfelli under', '/usr/local'))
+opts.Add(('destdir', 'Everything installed will go in this directory', ''))
 opts.Update(env)
 opts.Save('elfelli.conf', env)
 
@@ -57,7 +58,7 @@ env.Dictionary().update(paths)
 env.AppendUnique(CPPDEFINES=[('DATADIR', DefQuote(env['datadir'])),
                              ('LOCALEDIR', DefQuote(env['localedir']))])
 
-env.Alias("install", paths.values())
+env.Alias("install", map(lambda path: env['destdir']+path,paths.values()))
 
 Help("""
 scons        Build the program.

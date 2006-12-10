@@ -9,4 +9,4 @@ data_files = ['elfelli-logo.svg',
               'positive-plate.svg',
               'ui.xml']
 
-env.Install(env['datadir'], data_files)
+env.Install(env['destdir']+env['datadir'], data_files)
