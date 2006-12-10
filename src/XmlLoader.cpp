@@ -41,7 +41,7 @@ inline float str_to_float(const std::string& str)
 namespace Elfelli
 {
 
-  const char *XmlLoader::version_string = "elfelli-xml-1";
+const char *XmlLoader::version_string = "elfelli-xml-1";
 
 XmlLoader::XmlLoader()
 {
@@ -75,6 +75,9 @@ int XmlLoader::load(const char *filename, Simulation *target)
 
   XML_SetStartElementHandler(parser, XmlLoader::start_element);
   XML_ParseBuffer(parser, std::strlen(reinterpret_cast<char *>(buf)), 1);
+
+  if(!scene_started)
+    return 1;
 
   return errors;
 }
