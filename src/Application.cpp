@@ -36,6 +36,17 @@ const std::string Application::appname("Elfelli");
 const std::string Application::version("0.2");
 const std::string Application::datadir(DATADIR);
 
+namespace Stock
+{
+const Gtk::StockID EXPORT_PNG("export-png");
+const Gtk::StockID EXPORT_SVG("export-svg");
+
+const Gtk::StockID ADD_NEGATIVE("add-negative");
+const Gtk::StockID ADD_POSITIVE("add-positive");
+const Gtk::StockID ADD_NEGATIVE_PLATE("add-negative-plate");
+const Gtk::StockID ADD_POSITIVE_PLATE("add-positive-plate");
+}
+
 Application::Application(int argc, char **argv):
   gtk_main(argc, argv),
   export_png_dlg(main_win, "", FILE_CHOOSER_ACTION_SAVE),
@@ -63,7 +74,7 @@ void Application::setup_gettext()
 const std::string Application::find_datafile(const std::string& fname)
 {
   std::vector<std::string> dirs;
-  dirs.push_back("data");
+  dirs.push_back(Glib::get_current_dir() + "/" + "data");
   dirs.push_back(datadir);
 
   std::string fullpath;
@@ -265,6 +276,56 @@ void Application::reset_simulation()
   sim_canvas.refresh();
 }
 
+void Application::setup_stock_items()
+{
+  Glib::RefPtr<IconFactory> fact = IconFactory::create();
+  IconSource src;
+
+
+  Stock::add(Gtk::StockItem(Stock::EXPORT_PNG, _("Export _PNG")));
+  IconSet iset_export_png;
+  src.set_icon_name("gnome-mime-image-png");
+  iset_export_png.add_source(src);
+  fact->add(Stock::EXPORT_PNG, iset_export_png);
+
+  Stock::add(Gtk::StockItem(Stock::EXPORT_SVG, _("Export S_VG")));
+  IconSet iset_export_svg;
+  src.set_icon_name("gnome-mime-image-svg");
+  iset_export_svg.add_source(src);
+  fact->add(Stock::EXPORT_SVG, iset_export_svg);
+
+
+  Stock::add(Gtk::StockItem(Stock::ADD_NEGATIVE, _("Negative body")));
+  IconSet iset_add_negative;
+  src.set_icon_name("AddNegative");
+  src.set_filename(find_datafile("negative.svg"));
+  iset_add_negative.add_source(src);
+  fact->add(Stock::ADD_NEGATIVE, iset_add_negative);
+
+  Stock::add(Gtk::StockItem(Stock::ADD_POSITIVE, _("Positive body")));
+  IconSet iset_add_positive;
+  src.set_icon_name("AddPositive");
+  src.set_filename(find_datafile("positive.svg"));
+  iset_add_positive.add_source(src);
+  fact->add(Stock::ADD_POSITIVE, iset_add_positive);
+
+  Stock::add(Gtk::StockItem(Stock::ADD_NEGATIVE_PLATE, _("Negative plate")));
+  IconSet iset_add_negative_plate;
+  src.set_icon_name("AddNegativePlate");
+  src.set_filename(find_datafile("negative-plate.svg"));
+  iset_add_negative_plate.add_source(src);
+  fact->add(Stock::ADD_NEGATIVE_PLATE, iset_add_negative_plate);
+
+  Stock::add(Gtk::StockItem(Stock::ADD_POSITIVE_PLATE, _("Positive plate")));
+  IconSet iset_add_positive_plate;
+  src.set_icon_name("AddPositivePlate");
+  src.set_filename(find_datafile("positive-plate.svg"));
+  iset_add_positive_plate.add_source(src);
+  fact->add(Stock::ADD_POSITIVE_PLATE, iset_add_positive_plate);
+
+  fact->add_default();
+}
+
 bool Application::setup_ui_actions()
 {
   action_group = ActionGroup::create();
@@ -273,16 +334,16 @@ bool Application::setup_ui_actions()
   action_group->add( Action::create("New", Stock::NEW) , sigc::mem_fun(*this, &Application::reset_simulation));
   action_group->add( Action::create("Open", Stock::OPEN) , sigc::mem_fun(*this, &Application::on_open_activate));
   action_group->add( Action::create("SaveAs", Stock::SAVE_AS) , sigc::mem_fun(*this, &Application::on_save_activate));
-  action_group->add( Action::create("ExportPNG", _("Export _PNG")) , sigc::mem_fun(*this, &Application::on_export_png_activate));
-  action_group->add( Action::create("ExportSVG", _("Export S_VG")) );
+  action_group->add( Action::create("ExportPNG", Stock::EXPORT_PNG) , sigc::mem_fun(*this, &Application::on_export_png_activate));
+  action_group->add( Action::create("ExportSVG", Stock::EXPORT_SVG) );
   action_group->add( Action::create("Quit", Stock::QUIT) , sigc::mem_fun(*this, &Application::quit));
 
   action_group->add( Action::create("MenuEdit", _("E_dit")) );
   action_group->add( Action::create("Clear", Stock::CLEAR) , sigc::mem_fun(*this, &Application::reset_simulation));
-  action_group->add( Action::create("AddNegative", _("Negative body")) , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
-  action_group->add( Action::create("AddPositive", _("Positive body")) , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
-  action_group->add( Action::create("AddNegativePlate", _("Negative plate")) , sigc::mem_fun(*this, &Application::on_add_negative_plate_clicked));
-  action_group->add( Action::create("AddPositivePlate", _("Positive plate")) , sigc::mem_fun(*this, &Application::on_add_positive_plate_clicked));
+  action_group->add( Action::create("AddNegative", Stock::ADD_NEGATIVE) , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
+  action_group->add( Action::create("AddPositive", Stock::ADD_POSITIVE) , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
+  action_group->add( Action::create("AddNegativePlate", Stock::ADD_NEGATIVE_PLATE) , sigc::mem_fun(*this, &Application::on_add_negative_plate_clicked));
+  action_group->add( Action::create("AddPositivePlate", Stock::ADD_POSITIVE_PLATE) , sigc::mem_fun(*this, &Application::on_add_positive_plate_clicked));
 
   action_group->add( Action::create("MenuHelp", _("_Help")) );
   action_group->add( Action::create("About", Stock::ABOUT) , sigc::mem_fun(*this, &Application::on_about_activate));
@@ -292,59 +353,6 @@ bool Application::setup_ui_actions()
   main_win.add_accel_group(ui_manager->get_accel_group());
 
   ui_manager->add_ui_from_file(find_datafile("ui.xml"));
-
-  int w, h;
-  IconSize::lookup(dynamic_cast<Toolbar *>(ui_manager->get_widget("/ToolBar"))->get_icon_size(), w, h);
-
-  Image *img;
-  Glib::RefPtr<Gdk::Pixbuf> pixbuf;
-
-  if (ui_manager->get_widget("/MenuBar/MenuScene/ExportPNG"))
-    {
-      img = manage(new Image);
-      img->set_from_icon_name("gnome-mime-image-png", ICON_SIZE_MENU);
-      dynamic_cast<ImageMenuItem *>(ui_manager->get_widget("/MenuBar/MenuScene/ExportPNG"))->set_image(*img);
-    }
-
-  if (ui_manager->get_widget("/MenuBar/MenuScene/ExportSVG"))
-    {
-      img = manage(new Image);
-      img->set_from_icon_name("gnome-mime-image-svg", ICON_SIZE_MENU);
-      dynamic_cast<ImageMenuItem *>(ui_manager->get_widget("/MenuBar/MenuScene/ExportSVG"))->set_image(*img);
-    }
-
-
-  if (ui_manager->get_widget("/ToolBar/AddNegative"))
-    {
-      pixbuf = Gdk::Pixbuf::create_from_file(find_datafile("negative.svg"), w, h);
-      img = manage(new Image(pixbuf));
-      img->show();
-      dynamic_cast<ToolButton *>(ui_manager->get_widget("/ToolBar/AddNegative"))->set_icon_widget(*dynamic_cast<Widget *>(img));
-    }
-
-  if (ui_manager->get_widget("/ToolBar/AddPositive"))
-    {
-      pixbuf = Gdk::Pixbuf::create_from_file(find_datafile("positive.svg"), w, h);
-      img = manage(new Image(pixbuf));
-      img->show();
-      dynamic_cast<ToolButton *>(ui_manager->get_widget("/ToolBar/AddPositive"))->set_icon_widget(*dynamic_cast<Widget *>(img));
-    }
-
-  if (ui_manager->get_widget("/ToolBar/AddNegativePlate"))
-    {
-      pixbuf = Gdk::Pixbuf::create_from_file(find_datafile("negative-plate.svg"), w, h);
-      img = manage(new Image(pixbuf));
-      img->show();
-      dynamic_cast<ToolButton *>(ui_manager->get_widget("/ToolBar/AddNegativePlate"))->set_icon_widget(*dynamic_cast<Widget *>(img));
-    }
-
-  if (ui_manager->get_widget("/ToolBar/AddPositivePlate"))
-    {
-      pixbuf = Gdk::Pixbuf::create_from_file(find_datafile("positive-plate.svg"), w, h);
-      img = manage(new Image(pixbuf));
-      img->show();
-      dynamic_cast<ToolButton *>(ui_manager->get_widget("/ToolBar/AddPositivePlate"))->set_icon_widget(*dynamic_cast<Widget *>(img));
-    }
 
   return true;
 }
@@ -384,6 +392,7 @@ bool Application::build_gui()
   main_win.set_title(appname + " " + version);
   main_win.add(*vbox1);
 
+  setup_stock_items();
   setup_ui_actions();
 
   setup_file_chooser_dialogs();
@@ -406,6 +415,8 @@ int Application::main()
   reset_simulation();
 
   Main::run(main_win);
+
+  return 0;
 }
 
 }

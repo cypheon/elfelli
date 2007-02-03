@@ -29,6 +29,19 @@
 namespace Elfelli
 {
 
+namespace Stock
+{
+using namespace Gtk::Stock;
+extern const Gtk::StockID EXPORT_PNG;
+extern const Gtk::StockID EXPORT_SVG;
+
+extern const Gtk::StockID ADD_NEGATIVE;
+extern const Gtk::StockID ADD_POSITIVE;
+extern const Gtk::StockID ADD_NEGATIVE_PLATE;
+extern const Gtk::StockID ADD_POSITIVE_PLATE;
+
+}
+
 class Application
 {
 public:
@@ -48,6 +61,7 @@ private:
   bool build_gui();
   bool setup_ui_actions();
   void setup_file_chooser_dialogs();
+  void setup_stock_items();
 
   void reset_simulation();
 
