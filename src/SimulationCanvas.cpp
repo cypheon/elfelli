@@ -35,6 +35,14 @@ char *SimulationCanvas::color_names[] = {
   "#ffcccc",
   "#660000"};
 
+const float SimulationCanvas::MAX_CHARGE = 10.0;
+
+inline float sign(float f)
+{
+  if(f<0) return -1;
+  return 1;
+}
+
 SimulationCanvas::SimulationCanvas():
   mouse_pressed(false), body_radius(10), plate_radius(5),
   drag_state(DRAG_STATE_NONE), mouse_over(-1), active(-1)
@@ -136,6 +144,50 @@ bool SimulationCanvas::delete_selected()
 
   active = -1;
   return r;
+}
+
+bool SimulationCanvas::change_selected_charge(float delta)
+{
+  int n;
+  float new_charge;
+
+  if(active < 0)
+    return false;
+
+  if(active < 1024)
+  {
+    n = active;
+    if(n < bodies.size())
+    {
+      float& charge = bodies[n].charge;
+      new_charge = charge + sign(charge)*delta;
+      if((fabs(new_charge) > 0.001)
+         && (fabs(new_charge) <= MAX_CHARGE)
+         && (sign(new_charge) == sign(charge)))
+      {
+        charge = new_charge;
+      }
+    }
+  }
+  else
+  {
+    n = active-1024;
+    if(n < plates.size())
+    {
+      float& charge = plates[n].charge;
+      new_charge = charge + sign(charge)*delta;
+      if((fabs(new_charge) > 0.001)
+         && (fabs(new_charge) <= MAX_CHARGE)
+         && (sign(new_charge) == sign(charge)))
+      {
+        charge = new_charge;
+      }
+    }
+  }
+
+  refresh();
+
+  return true;
 }
 
 void SimulationCanvas::run()
@@ -529,36 +581,38 @@ bool SimulationCanvas::on_motion_notify_event(GdkEventMotion *event)
 
 bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
 {
-  mouse_pressed = true;
-
-  grab_focus();
-
-  last_click = Gdk::Point(static_cast<int>(event->x),
-                          static_cast<int>(event->y));
-
-  if(mouse_over >= 0)
+  if(event->button == 1)
   {
-    if(mouse_over < 1024)
+    mouse_pressed = true;
+
+    grab_focus();
+
+    last_click = Gdk::Point(static_cast<int>(event->x),
+                            static_cast<int>(event->y));
+
+    if(mouse_over >= 0)
     {
-      drag_offset = Gdk::Point(static_cast<int>(bodies[mouse_over].pos.get_x()-event->x),
-                               static_cast<int>(bodies[mouse_over].pos.get_y()-event->y));
-    }
-    else
-    {
-      if(point_hits_plate_b(plates[mouse_over-1024], static_cast<int>(event->x), static_cast<int>(event->y)))
+      if(mouse_over < 1024)
       {
-        drag_offset = Gdk::Point(static_cast<int>(plates[mouse_over-1024].pos_b.get_x()-event->x),
-                                 static_cast<int>(plates[mouse_over-1024].pos_b.get_y()-event->y));
+        drag_offset = Gdk::Point(static_cast<int>(bodies[mouse_over].pos.get_x()-event->x),
+                                 static_cast<int>(bodies[mouse_over].pos.get_y()-event->y));
       }
       else
       {
-        drag_offset = Gdk::Point(static_cast<int>(plates[mouse_over-1024].pos_a.get_x()-event->x),
-                                 static_cast<int>(plates[mouse_over-1024].pos_a.get_y()-event->y));
+        if(point_hits_plate_b(plates[mouse_over-1024], static_cast<int>(event->x), static_cast<int>(event->y)))
+        {
+          drag_offset = Gdk::Point(static_cast<int>(plates[mouse_over-1024].pos_b.get_x()-event->x),
+                                   static_cast<int>(plates[mouse_over-1024].pos_b.get_y()-event->y));
+        }
+        else
+        {
+          drag_offset = Gdk::Point(static_cast<int>(plates[mouse_over-1024].pos_a.get_x()-event->x),
+                                   static_cast<int>(plates[mouse_over-1024].pos_a.get_y()-event->y));
+        }
       }
     }
-  }
 
-  if((active >= 0) && (active < 1024))
+    if((active >= 0) && (active < 1024))
     {
       int x, y;
       x = static_cast<int>(bodies[active].pos.get_x()) - 2*body_radius;
@@ -568,7 +622,7 @@ bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
                             4*body_radius+10, 4*body_radius+10);
     }
 
-  if(active >= 1024)
+    if(active >= 1024)
     {
       int x, y;
       x = static_cast<int>(plates[active-1024].pos_a.get_x()) - plate_radius;
@@ -584,15 +638,18 @@ bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
                             2*plate_radius+4, 2*plate_radius+4);
     }
 
-  active = mouse_over;
-  draw_plates();
-  draw_bodies();
+    active = mouse_over;
+    draw_plates();
+    draw_bodies();
+  }
 }
 
 bool SimulationCanvas::on_button_release_event(GdkEventButton *event)
 {
-  mouse_pressed = false;
-  if(drag_state)
+  if(event->button == 1)
+  {
+    mouse_pressed = false;
+    if(drag_state)
     {
       if(active >= 0)
       {
@@ -610,19 +667,28 @@ bool SimulationCanvas::on_button_release_event(GdkEventButton *event)
       drag_state = DRAG_STATE_NONE;
       refresh();
     }
-  else
+    else
     {
       draw_plates();
       draw_bodies();
     }
+  }
 }
 
 bool SimulationCanvas::on_key_press_event(GdkEventKey *event)
 {
   if(event->keyval == GDK_Delete)
-    {
-      delete_selected();
-    }
+  {
+    delete_selected();
+  }
+  else if(event->keyval == GDK_Up)
+  {
+    increase_selected_charge();
+  }
+  else if(event->keyval == GDK_Down)
+  {
+    decrease_selected_charge();
+  }
 }
 
 bool SimulationCanvas::point_hits_body(Body& b, int x, int y)

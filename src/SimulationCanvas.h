@@ -60,6 +60,10 @@ public:
   bool delete_plate(int n);
   bool delete_selected();
 
+  bool change_selected_charge(float delta);
+  bool increase_selected_charge(){return change_selected_charge(1);};
+  bool decrease_selected_charge(){return change_selected_charge(-1);};
+
 private:
   void draw_flux_lines();
   void draw_bodies(bool draw_selected=true);
@@ -74,6 +78,7 @@ private:
   int object_at(int x, int y);
 
   static char *color_names[];
+  static const float MAX_CHARGE;
 
   int body_radius, plate_radius;
 
