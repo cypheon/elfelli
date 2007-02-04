@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-04 16:06+0100\n"
+"POT-Creation-Date: 2007-02-04 20:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/Application.cpp:163 src/Application.cpp:368
+#: src/Application.cpp:171 src/Application.cpp:376
 msgid "Elfelli XML (*.elfelli)"
 msgstr ""
 
-#: src/Application.cpp:239
+#: src/Application.cpp:247
 msgid ""
 "This program is free software; you can redistribute it and/or modify\n"
 "it under the terms of the GNU General Public License as published by\n"
@@ -28,7 +28,7 @@ msgid ""
 "at your option) any later version.\n"
 msgstr ""
 
-#: src/Application.cpp:244
+#: src/Application.cpp:252
 msgid ""
 "This program is distributed in the hope that it will be useful,\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
@@ -36,7 +36,7 @@ msgid ""
 "GNU General Public License for more details.\n"
 msgstr ""
 
-#: src/Application.cpp:249
+#: src/Application.cpp:257
 msgid ""
 "You should have received a copy of the GNU General Public License\n"
 "along with this program; if not, write to the Free Software\n"
@@ -44,54 +44,74 @@ msgid ""
 "USA\n"
 msgstr ""
 
-#: src/Application.cpp:285
+#: src/Application.cpp:293
 msgid "Export _PNG"
 msgstr ""
 
-#: src/Application.cpp:291
+#: src/Application.cpp:299
 msgid "Export S_VG"
 msgstr ""
 
-#: src/Application.cpp:298
+#: src/Application.cpp:306
 msgid "Negative body"
 msgstr ""
 
-#: src/Application.cpp:305
+#: src/Application.cpp:313
 msgid "Positive body"
 msgstr ""
 
-#: src/Application.cpp:312
+#: src/Application.cpp:320
 msgid "Negative plate"
 msgstr ""
 
-#: src/Application.cpp:319
+#: src/Application.cpp:327
 msgid "Positive plate"
 msgstr ""
 
-#: src/Application.cpp:333
+#: src/Application.cpp:341
 msgid "_Scene"
 msgstr ""
 
-#: src/Application.cpp:341
+#: src/Application.cpp:349
 msgid "E_dit"
 msgstr ""
 
-#: src/Application.cpp:348
+#: src/Application.cpp:350
+msgid "Remove all objects"
+msgstr ""
+
+#: src/Application.cpp:351
+msgid "Add new negative body"
+msgstr ""
+
+#: src/Application.cpp:352
+msgid "Add new positive body"
+msgstr ""
+
+#: src/Application.cpp:353
+msgid "Add new negative plate"
+msgstr ""
+
+#: src/Application.cpp:354
+msgid "Add new positive plate"
+msgstr ""
+
+#: src/Application.cpp:356
 msgid "_Help"
 msgstr ""
 
-#: src/Application.cpp:365
+#: src/Application.cpp:373
 msgid "Export PNG"
 msgstr ""
 
-#: src/Application.cpp:371
+#: src/Application.cpp:379
 msgid "All files"
 msgstr ""
 
-#: src/Application.cpp:374
+#: src/Application.cpp:382
 msgid "Save scene"
 msgstr ""
 
-#: src/Application.cpp:382
+#: src/Application.cpp:390
 msgid "Open scene"
 msgstr ""

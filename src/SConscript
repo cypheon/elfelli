@@ -6,6 +6,7 @@ elfelli_sources = ['Application.cpp',
                    'Canvas.cpp',
                    'Simulation.cpp',
                    'SimulationCanvas.cpp',
+                   'Toolbox.cpp',
                    'XmlLoader.cpp',
                    'XmlWriter.cpp',
                    'Main.cpp']

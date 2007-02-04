@@ -19,6 +19,7 @@
 
 #include "Application.h"
 #include "Simulation.h"
+#include "Toolbox.h"
 #include "XmlLoader.h"
 #include "XmlWriter.h"
 
@@ -346,11 +347,11 @@ bool Application::setup_ui_actions()
   action_group->add( Action::create("Quit", Stock::QUIT) , sigc::mem_fun(*this, &Application::quit));
 
   action_group->add( Action::create("MenuEdit", _("E_dit")) );
-  action_group->add( Action::create("Clear", Stock::CLEAR) , sigc::mem_fun(*this, &Application::reset_simulation));
-  action_group->add( Action::create("AddNegative", Stock::ADD_NEGATIVE) , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
-  action_group->add( Action::create("AddPositive", Stock::ADD_POSITIVE) , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
-  action_group->add( Action::create("AddNegativePlate", Stock::ADD_NEGATIVE_PLATE) , sigc::mem_fun(*this, &Application::on_add_negative_plate_clicked));
-  action_group->add( Action::create("AddPositivePlate", Stock::ADD_POSITIVE_PLATE) , sigc::mem_fun(*this, &Application::on_add_positive_plate_clicked));
+  action_group->add( Action::create("Clear", Stock::CLEAR, "", _("Remove all objects")) , sigc::mem_fun(*this, &Application::reset_simulation));
+  action_group->add( Action::create("AddNegative", Stock::ADD_NEGATIVE, "", _("Add new negative body")) , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
+  action_group->add( Action::create("AddPositive", Stock::ADD_POSITIVE, "", _("Add new positive body")) , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
+  action_group->add( Action::create("AddNegativePlate", Stock::ADD_NEGATIVE_PLATE, "", _("Add new negative plate")) , sigc::mem_fun(*this, &Application::on_add_negative_plate_clicked));
+  action_group->add( Action::create("AddPositivePlate", Stock::ADD_POSITIVE_PLATE, "", _("Add new positive plate")) , sigc::mem_fun(*this, &Application::on_add_positive_plate_clicked));
 
   action_group->add( Action::create("MenuHelp", _("_Help")) );
   action_group->add( Action::create("About", Stock::ABOUT) , sigc::mem_fun(*this, &Application::on_about_activate));
@@ -405,7 +406,10 @@ bool Application::build_gui()
   setup_file_chooser_dialogs();
 
   vbox1->pack_start(*(ui_manager->get_widget("/MenuBar")), false, false);
-  vbox1->pack_start(*(ui_manager->get_widget("/ToolBar")), false, false);
+
+  Gtk::Toolbar *main_toolbar = static_cast<Gtk::Toolbar *>(ui_manager->get_widget("/ToolBar"));
+  Toolbox *main_toolbox = manage(new Toolbox(main_toolbar));
+  vbox1->pack_start(*main_toolbox, false, false);
 
   vbox1->pack_start(sim_canvas);
   sim_canvas.set_size_request(640, 480);
