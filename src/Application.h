@@ -49,6 +49,8 @@ public:
   int main();
   void quit();
 
+  void load_file(std::string filename);
+
   static const std::string find_datafile(const std::string& fname);
 
   static const std::string appname;

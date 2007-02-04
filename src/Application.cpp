@@ -55,6 +55,12 @@ Application::Application(int argc, char **argv):
 {
   setup_gettext();
   build_gui();
+  reset_simulation();
+
+  if(argc >= 2)
+  {
+    load_file(argv[1]);
+  }
 }
 
 void Application::setup_gettext()
@@ -122,31 +128,32 @@ void Application::on_export_png_activate()
 
 void Application::on_open_activate()
 {
-  std::string filename = "";
-
   int result = open_dlg.run();
   if(result == RESPONSE_OK)
-    {
-      filename = open_dlg.get_filename();
-      
-#ifdef DEBUG
-      std::cerr << "Loading file `" << filename << "'." << std::endl;
-#endif // DEBUG
-
-      XmlLoader loader;
-
-      Simulation *tmp_sim = new Simulation;
-
-      if(loader.load(filename.c_str(), tmp_sim) == 0)
-      {
-        sim_canvas = *tmp_sim;
-        sim_canvas.refresh();
-      }
-
-      delete tmp_sim;
-    }
+  {
+    load_file(open_dlg.get_filename());
+  }
 
   open_dlg.hide();
+}
+
+void Application::load_file(std::string filename)
+{
+#ifdef DEBUG
+  std::cerr << "Loading file `" << filename << "'." << std::endl;
+#endif // DEBUG
+
+  XmlLoader loader;
+
+  Simulation *tmp_sim = new Simulation;
+
+  if(loader.load(filename.c_str(), tmp_sim) == 0)
+  {
+    sim_canvas = *tmp_sim;
+    sim_canvas.refresh();
+  }
+
+  delete tmp_sim;
 }
 
 void Application::on_save_activate()
@@ -412,8 +419,6 @@ bool Application::build_gui()
 
 int Application::main()
 {
-  reset_simulation();
-
   Main::run(main_win);
 
   return 0;

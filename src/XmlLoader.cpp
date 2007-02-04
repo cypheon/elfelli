@@ -130,7 +130,9 @@ void XmlLoader::start_element(void *data, const XML_Char *name, const XML_Char *
       if(have_x && have_y && have_charge)
       {
         xml->sim->add_body(Vec2(x, y), charge);
+#ifdef DEBUG
         std::cerr << "added body\n";
+#endif // DEBUG
       }
     }
     else if(strcmp(name, "plate") == 0)
@@ -185,7 +187,9 @@ void XmlLoader::start_element(void *data, const XML_Char *name, const XML_Char *
       if(have_x1 && have_y1 && have_x2 && have_y2 && have_charge)
       {
         xml->sim->add_plate(Vec2(x1, y1), Vec2(x2, y2), charge);
+#ifdef DEBUG
         std::cerr << "added plate\n";
+#endif // DEBUG
       }
     }
     else
