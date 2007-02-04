@@ -675,6 +675,18 @@ bool SimulationCanvas::on_button_release_event(GdkEventButton *event)
   }
 }
 
+bool SimulationCanvas::on_scroll_event(GdkEventScroll *event)
+{
+  if(event->direction == GDK_SCROLL_UP)
+  {
+    increase_selected_charge();
+  }
+  else if(event->direction == GDK_SCROLL_DOWN)
+  {
+    decrease_selected_charge();
+  }
+}
+
 bool SimulationCanvas::on_key_press_event(GdkEventKey *event)
 {
   if(event->keyval == GDK_Delete)

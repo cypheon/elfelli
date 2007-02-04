@@ -33,7 +33,6 @@ if __name__ == '__main__':
     if (len(sys.argv) >= 2) and (sys.argv[1] == 'update'):
         update_pot()
         update_po_files(locales)
-        compile_po_files(locales)
 
     elif (len(sys.argv) >= 3) and (sys.argv[1] == 'init'):
         update_pot()

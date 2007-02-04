@@ -104,6 +104,7 @@ protected:
   virtual bool on_motion_notify_event(GdkEventMotion *event);
   virtual bool on_button_press_event(GdkEventButton *event);
   virtual bool on_button_release_event(GdkEventButton *event);
+  virtual bool on_scroll_event(GdkEventScroll *event);
 
   virtual bool on_key_press_event(GdkEventKey *event);
 };

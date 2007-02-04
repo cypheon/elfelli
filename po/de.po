@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elfelli 01\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-01 19:04+0100\n"
+"POT-Creation-Date: 2007-02-04 16:04+0100\n"
 "PO-Revision-Date: 2006-11-07 20:30+0100\n"
 "Last-Translator: Johann Rudloff <cypheon@gmx.net>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Application.cpp:94
-msgid "Export PNG"
-msgstr "PNG exportieren"
+#: src/Application.cpp:163 src/Application.cpp:368
+msgid "Elfelli XML (*.elfelli)"
+msgstr "Elfelli-XML (*.elfelli)"
 
-#: src/Application.cpp:153
+#: src/Application.cpp:239
 msgid ""
 "This program is free software; you can redistribute it and/or modify\n"
 "it under the terms of the GNU General Public License as published by\n"
@@ -33,7 +33,7 @@ msgstr ""
 "öffentlicht, weitergeben und/oder modifizieren; entweder gemäß Version 2\n"
 "der Lizenz, oder (nach Ihrem Ermessen) gemäß jeder späteren Version.\n"
 
-#: src/Application.cpp:158
+#: src/Application.cpp:244
 msgid ""
 "This program is distributed in the hope that it will be useful,\n"
 "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
@@ -45,7 +45,7 @@ msgstr ""
 "die implizite Garantie der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN\n"
 "BESTIMMTEN ZWECK. Details finden Sie in der GNU General Public License.\n"
 
-#: src/Application.cpp:163
+#: src/Application.cpp:249
 msgid ""
 "You should have received a copy of the GNU General Public License\n"
 "along with this program; if not, write to the Free Software\n"
@@ -57,38 +57,54 @@ msgstr ""
 "Free Software Foundation, Inc.\n"
 "51 Franklin Street, Fifth Floor, Boston, MA 02110, USA.\n"
 
-#: src/Application.cpp:197
-msgid "_Scene"
-msgstr "_Szene"
-
-#: src/Application.cpp:201
+#: src/Application.cpp:285
 msgid "Export _PNG"
 msgstr "_PNG exportieren"
 
-#: src/Application.cpp:202
+#: src/Application.cpp:291
 msgid "Export S_VG"
 msgstr "S_VG exportieren"
 
-#: src/Application.cpp:205
-msgid "E_dit"
-msgstr "_Bearbeiten"
-
-#: src/Application.cpp:207
+#: src/Application.cpp:298
 msgid "Negative body"
 msgstr "Negativer Körper"
 
-#: src/Application.cpp:208
+#: src/Application.cpp:305
 msgid "Positive body"
 msgstr "Positiver Körper"
 
-#: src/Application.cpp:209
+#: src/Application.cpp:312
 msgid "Negative plate"
 msgstr "Negative Platte"
 
-#: src/Application.cpp:210
+#: src/Application.cpp:319
 msgid "Positive plate"
 msgstr "Positive Platte"
 
-#: src/Application.cpp:212
+#: src/Application.cpp:333
+msgid "_Scene"
+msgstr "_Szene"
+
+#: src/Application.cpp:341
+msgid "E_dit"
+msgstr "_Bearbeiten"
+
+#: src/Application.cpp:348
 msgid "_Help"
 msgstr "_Hilfe"
+
+#: src/Application.cpp:365
+msgid "Export PNG"
+msgstr "PNG exportieren"
+
+#: src/Application.cpp:371
+msgid "All files"
+msgstr "Alle Dateien"
+
+#: src/Application.cpp:374
+msgid "Save scene"
+msgstr "Szene speichern"
+
+#: src/Application.cpp:382
+msgid "Open scene"
+msgstr "Szene öffnen"
