@@ -273,6 +273,31 @@ void Application::on_about_activate()
   dlg.run();
 }
 
+void Application::on_sim_selection_changed()
+{
+  bool sel = sim_canvas.has_selection();
+  object_toolbar->set_sensitive(sel);
+  object_actions->set_sensitive(sel);
+
+  update_charge_spin();
+}
+
+void Application::on_sim_selected_charge_changed()
+{
+  update_charge_spin();
+}
+
+void Application::on_charge_value_changed()
+{
+  sim_canvas.set_selected_charge(charge_spin->get_value());
+}
+
+void Application::update_charge_spin()
+{
+  float charge = sim_canvas.get_selected_charge();
+  charge_spin->set_value(charge);
+}
+
 void Application::quit()
 {
   Main::quit();
@@ -413,8 +438,6 @@ Widget *Application::build_object_toolbar()
   HBox *tb = new HBox;
   al->add(*manage(tb));
   al->set_padding(2, 2, 0, 0);
-  al->set_sensitive(false);
-
 
   Tooltips *tips = new Tooltips;
   Button *btn;
@@ -425,6 +448,7 @@ Widget *Application::build_object_toolbar()
   btn->unset_flags(CAN_FOCUS);
   btn->set_image(*manage(img));
   btn->set_relief(RELIEF_NONE);
+  btn->signal_clicked().connect(sigc::mem_fun(*this, &Application::on_remove_selected_activate));
   tips->set_tip(*btn, _("Remove this object"));
   tb->pack_start(*btn, false, false);
 
@@ -435,7 +459,14 @@ Widget *Application::build_object_toolbar()
 
   HBox *charge_box = manage(new HBox);
   charge_box->pack_start(*manage(new Label(_("Charge:"))));
-  SpinButton *charge_spin = manage(new SpinButton);
+
+  charge_spin = manage(new SpinButton);
+  charge_spin->set_digits(1);
+  charge_spin->signal_value_changed().connect(sigc::mem_fun(*this, &Application::on_charge_value_changed));
+  charge_spin->set_range(SimulationCanvas::MIN_CHARGE, SimulationCanvas::MAX_CHARGE);
+  charge_spin->set_increments(SimulationCanvas::CHARGE_STEP_SMALL, SimulationCanvas::CHARGE_STEP);
+  tips->set_tip(*charge_spin, _("Change the absolute value of this object's charge"));
+
   charge_box->pack_start(*charge_spin);
   Alignment *charge_al = manage(new Alignment);
   charge_al->add(*charge_box);
@@ -464,13 +495,16 @@ bool Application::build_gui()
   Toolbox *main_toolbox = manage(new Toolbox(main_toolbar));
   vbox1->pack_start(*main_toolbox, false, false);
 
-  Gtk::Widget *object_toolbar = manage(build_object_toolbar());
+  object_toolbar = manage(build_object_toolbar());
+  object_toolbar->set_sensitive(false);
   HandleBox *object_toolbox = manage(new HandleBox);
   object_toolbox->add(*object_toolbar);
   vbox1->pack_start(*object_toolbox, false, false);
 
   vbox1->pack_start(sim_canvas);
   sim_canvas.set_size_request(640, 480);
+  sim_canvas.signal_selection_changed().connect(sigc::mem_fun(*this, &Application::on_sim_selection_changed));
+  sim_canvas.signal_selected_charge_changed().connect(sigc::mem_fun(*this, &Application::on_sim_selected_charge_changed));
 
   vbox1->pack_start(sbar, false, false);
 

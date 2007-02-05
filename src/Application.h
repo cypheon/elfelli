@@ -67,6 +67,7 @@ private:
   void setup_stock_items();
 
   void reset_simulation();
+  void update_charge_spin();
 
   bool on_expose(GdkEventExpose *event);
   void on_remove_selected_activate();
@@ -81,9 +82,15 @@ private:
   void on_open_activate();
   void on_save_activate();
 
+  void on_sim_selection_changed();
+  void on_sim_selected_charge_changed();
+  void on_charge_value_changed();
+
   Gtk::Main gtk_main;
   Gtk::Window main_win;
   Gtk::Statusbar sbar;
+  Gtk::Widget *object_toolbar;
+  Gtk::SpinButton *charge_spin;
 
   Gtk::FileChooserDialog export_png_dlg, save_dlg, open_dlg;
   Gtk::FileFilter elfelli_xml, all;

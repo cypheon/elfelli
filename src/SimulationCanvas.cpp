@@ -35,13 +35,10 @@ char *SimulationCanvas::color_names[] = {
   "#ffcccc",
   "#660000"};
 
-const float SimulationCanvas::MAX_CHARGE = 10.0;
-
-inline float sign(float f)
-{
-  if(f<0) return -1;
-  return 1;
-}
+const float SimulationCanvas::MAX_CHARGE(10.0);
+const float SimulationCanvas::MIN_CHARGE(1.0);
+const float SimulationCanvas::CHARGE_STEP(1.0);
+const float SimulationCanvas::CHARGE_STEP_SMALL(0.1);
 
 SimulationCanvas::SimulationCanvas():
   mouse_pressed(false), body_radius(10), plate_radius(5),
@@ -63,6 +60,8 @@ void SimulationCanvas::operator=(const Simulation& sim)
   mouse_pressed = false;
   mouse_over = -1;
   active = -1;
+
+  sig_selection_changed.emit();
 }
 
 void SimulationCanvas::refresh()
@@ -80,7 +79,30 @@ void SimulationCanvas::clear()
   mouse_over = active = -1;
   drag_state = DRAG_STATE_NONE;
 
+  sig_selection_changed.emit();
+
   refresh();
+}
+
+bool SimulationCanvas::has_selection()
+{
+  if(active < 0)
+    return false;
+
+  if(active < 1024)
+  {
+    if(active < bodies.size())
+      return true;
+    else
+      return false;
+  }
+  else
+  {
+    if((active-1024) < plates.size())
+      return true;
+    else
+      return false;
+  }
 }
 
 bool SimulationCanvas::delete_body(int n)
@@ -143,6 +165,7 @@ bool SimulationCanvas::delete_selected()
   }
 
   active = -1;
+  sig_selection_changed.emit();
   return r;
 }
 
@@ -158,7 +181,7 @@ float SimulationCanvas::get_selected_charge()
     n = active;
     if(n < bodies.size())
     {
-      return bodies[n].charge;
+      return fabs(bodies[n].charge);
     }
   }
   else
@@ -166,7 +189,7 @@ float SimulationCanvas::get_selected_charge()
     n = active-1024;
     if(n < plates.size())
     {
-      return plates[n].charge;
+      return fabs(plates[n].charge);
     }
   }
 
@@ -178,6 +201,7 @@ float SimulationCanvas::get_selected_charge()
 bool SimulationCanvas::set_selected_charge(float value)
 {
   int n;
+  float delta = 0;
 
   if(active < 0)
     return false;
@@ -187,7 +211,8 @@ bool SimulationCanvas::set_selected_charge(float value)
     n = active;
     if(n < bodies.size())
     {
-      bodies[n].charge = value;
+      delta = fabs(fabs(bodies[n].charge) - value);
+      bodies[n].charge = sign(bodies[n].charge)*value;
     }
   }
   else
@@ -195,11 +220,16 @@ bool SimulationCanvas::set_selected_charge(float value)
     n = active-1024;
     if(n < plates.size())
     {
-      plates[n].charge = value;
+      delta = fabs(fabs(plates[n].charge) - value);
+      plates[n].charge = sign(plates[n].charge)*value;
     }
   }
 
-  refresh();
+  if(delta > 0.01)
+  {
+    refresh();
+    sig_selected_charge_changed.emit();
+  }
 
   return true;
 }
@@ -210,7 +240,7 @@ bool SimulationCanvas::change_selected_charge(float delta)
 
   float charge = get_selected_charge();
   new_charge = charge + sign(charge)*delta;
-  if((fabs(new_charge) > 0.01)
+  if((fabs(new_charge) >= (MIN_CHARGE - 0.01))
      && (fabs(new_charge) <= MAX_CHARGE)
      && (sign(new_charge) == sign(charge)))
   {
@@ -218,6 +248,26 @@ bool SimulationCanvas::change_selected_charge(float delta)
   }
 
   return true;
+}
+
+bool SimulationCanvas::increase_selected_charge(bool small)
+{
+  return change_selected_charge(small ? CHARGE_STEP_SMALL : CHARGE_STEP);
+}
+
+bool SimulationCanvas::decrease_selected_charge(bool small)
+{
+  return change_selected_charge(small ? -CHARGE_STEP_SMALL : -CHARGE_STEP);
+}
+
+sigc::signal<void> SimulationCanvas::signal_selected_charge_changed()
+{
+  return sig_selected_charge_changed;
+}
+
+sigc::signal<void> SimulationCanvas::signal_selection_changed()
+{
+  return sig_selection_changed;
 }
 
 void SimulationCanvas::run()
@@ -668,7 +718,11 @@ bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
                             2*plate_radius+4, 2*plate_radius+4);
     }
 
-    active = mouse_over;
+    if(active != mouse_over)
+    {
+      active = mouse_over;
+      sig_selection_changed.emit();
+    }
     draw_plates();
     draw_bodies();
   }
@@ -725,11 +779,11 @@ bool SimulationCanvas::on_key_press_event(GdkEventKey *event)
   }
   else if(event->keyval == GDK_Up)
   {
-    increase_selected_charge();
+    increase_selected_charge(event->state & GDK_SHIFT_MASK);
   }
   else if(event->keyval == GDK_Down)
   {
-    decrease_selected_charge();
+    decrease_selected_charge(event->state & GDK_SHIFT_MASK);
   }
 }
 

@@ -29,6 +29,12 @@
 namespace Elfelli
 {
 
+inline float sign(float f)
+{
+  if(f<0) return -1;
+  return 1;
+}
+
 enum BodyState
   {
     BODY_STATE_NORMAL = 0,
@@ -54,6 +60,8 @@ public:
 
   void operator=(const Simulation& sim);
 
+  bool has_selection();
+
   void refresh();
   void clear();
   bool delete_body(int n);
@@ -64,8 +72,16 @@ public:
   float get_selected_charge();
 
   bool change_selected_charge(float delta);
-  bool increase_selected_charge(){return change_selected_charge(1);};
-  bool decrease_selected_charge(){return change_selected_charge(-1);};
+  bool increase_selected_charge(bool small=false);
+  bool decrease_selected_charge(bool small=false);
+
+  sigc::signal<void> signal_selected_charge_changed();
+  sigc::signal<void> signal_selection_changed();
+
+  static const float MAX_CHARGE;
+  static const float MIN_CHARGE;
+  static const float CHARGE_STEP;
+  static const float CHARGE_STEP_SMALL;
 
 private:
   void draw_flux_lines();
@@ -81,7 +97,6 @@ private:
   int object_at(int x, int y);
 
   static char *color_names[];
-  static const float MAX_CHARGE;
 
   int body_radius, plate_radius;
 
@@ -96,6 +111,9 @@ private:
   Gdk::Color colors[BODY_STATES_NUM * 2];
   Glib::RefPtr<Gdk::Pixmap> lines_pixmap;
   std::vector<Path> paths;
+
+  sigc::signal<void> sig_selected_charge_changed;
+  sigc::signal<void> sig_selection_changed;
 
 protected:
   virtual void run();
