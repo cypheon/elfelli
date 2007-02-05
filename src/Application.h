@@ -60,6 +60,7 @@ public:
 private:
   void setup_gettext();
 
+  Gtk::Widget *build_object_toolbar();
   bool build_gui();
   bool setup_ui_actions();
   void setup_file_chooser_dialogs();
@@ -68,6 +69,7 @@ private:
   void reset_simulation();
 
   bool on_expose(GdkEventExpose *event);
+  void on_remove_selected_activate();
   void on_add_positive_body_clicked();
   void on_add_negative_body_clicked();
   void on_add_positive_plate_clicked();
@@ -86,7 +88,7 @@ private:
   Gtk::FileChooserDialog export_png_dlg, save_dlg, open_dlg;
   Gtk::FileFilter elfelli_xml, all;
 
-  Glib::RefPtr<Gtk::ActionGroup> action_group;
+  Glib::RefPtr<Gtk::ActionGroup> general_actions, object_actions;
   Glib::RefPtr<Gtk::UIManager> ui_manager;
 
   SimulationCanvas sim_canvas;

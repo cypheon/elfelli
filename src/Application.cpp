@@ -284,6 +284,11 @@ void Application::reset_simulation()
   sim_canvas.refresh();
 }
 
+void Application::on_remove_selected_activate()
+{
+  sim_canvas.delete_selected();
+}
+
 void Application::setup_stock_items()
 {
   Glib::RefPtr<IconFactory> fact = IconFactory::create();
@@ -336,30 +341,39 @@ void Application::setup_stock_items()
 
 bool Application::setup_ui_actions()
 {
-  action_group = ActionGroup::create();
-
-  action_group->add( Action::create("MenuScene", _("_Scene")) );
-  action_group->add( Action::create("New", Stock::NEW) , sigc::mem_fun(*this, &Application::reset_simulation));
-  action_group->add( Action::create("Open", Stock::OPEN) , sigc::mem_fun(*this, &Application::on_open_activate));
-  action_group->add( Action::create("SaveAs", Stock::SAVE_AS) , sigc::mem_fun(*this, &Application::on_save_activate));
-  action_group->add( Action::create("ExportPNG", Stock::EXPORT_PNG) , sigc::mem_fun(*this, &Application::on_export_png_activate));
-  action_group->add( Action::create("ExportSVG", Stock::EXPORT_SVG) );
-  action_group->add( Action::create("Quit", Stock::QUIT) , sigc::mem_fun(*this, &Application::quit));
-
-  action_group->add( Action::create("MenuEdit", _("E_dit")) );
-  action_group->add( Action::create("Clear", Stock::CLEAR, "", _("Remove all objects")) , sigc::mem_fun(*this, &Application::reset_simulation));
-  action_group->add( Action::create("AddNegative", Stock::ADD_NEGATIVE, "", _("Add new negative body")) , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
-  action_group->add( Action::create("AddPositive", Stock::ADD_POSITIVE, "", _("Add new positive body")) , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
-  action_group->add( Action::create("AddNegativePlate", Stock::ADD_NEGATIVE_PLATE, "", _("Add new negative plate")) , sigc::mem_fun(*this, &Application::on_add_negative_plate_clicked));
-  action_group->add( Action::create("AddPositivePlate", Stock::ADD_POSITIVE_PLATE, "", _("Add new positive plate")) , sigc::mem_fun(*this, &Application::on_add_positive_plate_clicked));
-
-  action_group->add( Action::create("MenuHelp", _("_Help")) );
-  action_group->add( Action::create("About", Stock::ABOUT) , sigc::mem_fun(*this, &Application::on_about_activate));
-
   ui_manager = UIManager::create();
-  ui_manager->insert_action_group(action_group);
-  main_win.add_accel_group(ui_manager->get_accel_group());
 
+  general_actions = ActionGroup::create();
+
+  general_actions->add( Action::create("MenuScene", _("_Scene")) );
+  general_actions->add( Action::create("New", Stock::NEW) , sigc::mem_fun(*this, &Application::reset_simulation));
+  general_actions->add( Action::create("Open", Stock::OPEN) , sigc::mem_fun(*this, &Application::on_open_activate));
+  general_actions->add( Action::create("SaveAs", Stock::SAVE_AS) , sigc::mem_fun(*this, &Application::on_save_activate));
+  general_actions->add( Action::create("ExportPNG", Stock::EXPORT_PNG) , sigc::mem_fun(*this, &Application::on_export_png_activate));
+  general_actions->add( Action::create("ExportSVG", Stock::EXPORT_SVG) );
+  general_actions->add( Action::create("Quit", Stock::QUIT) , sigc::mem_fun(*this, &Application::quit));
+
+  general_actions->add( Action::create("MenuEdit", _("E_dit")) );
+  general_actions->add( Action::create("Clear", Stock::CLEAR, "", _("Remove all objects")) , sigc::mem_fun(*this, &Application::reset_simulation));
+  general_actions->add( Action::create("AddNegative", Stock::ADD_NEGATIVE, "", _("Add new negative body")) , sigc::mem_fun(*this, &Application::on_add_negative_body_clicked));
+  general_actions->add( Action::create("AddPositive", Stock::ADD_POSITIVE, "", _("Add new positive body")) , sigc::mem_fun(*this, &Application::on_add_positive_body_clicked));
+  general_actions->add( Action::create("AddNegativePlate", Stock::ADD_NEGATIVE_PLATE, "", _("Add new negative plate")) , sigc::mem_fun(*this, &Application::on_add_negative_plate_clicked));
+  general_actions->add( Action::create("AddPositivePlate", Stock::ADD_POSITIVE_PLATE, "", _("Add new positive plate")) , sigc::mem_fun(*this, &Application::on_add_positive_plate_clicked));
+
+  general_actions->add( Action::create("MenuHelp", _("_Help")) );
+  general_actions->add( Action::create("About", Stock::ABOUT) , sigc::mem_fun(*this, &Application::on_about_activate));
+
+  ui_manager->insert_action_group(general_actions);
+
+
+  object_actions = ActionGroup::create();
+  object_actions->add( Action::create("Remove", Stock::REMOVE, "", _("Remove this object")) , sigc::mem_fun(*this, &Application::on_remove_selected_activate));
+  object_actions->set_sensitive(false);
+
+  ui_manager->insert_action_group(object_actions);
+
+
+  main_win.add_accel_group(ui_manager->get_accel_group());
   ui_manager->add_ui_from_file(find_datafile("ui.xml"));
 
   return true;
@@ -393,6 +407,45 @@ void Application::setup_file_chooser_dialogs()
   open_dlg.add_filter(all);
 }
 
+Widget *Application::build_object_toolbar()
+{
+  Alignment *al = new Alignment(0.5, 0.5, 1.0, 0.0);
+  HBox *tb = new HBox;
+  al->add(*manage(tb));
+  al->set_padding(2, 2, 0, 0);
+  al->set_sensitive(false);
+
+
+  Tooltips *tips = new Tooltips;
+  Button *btn;
+  Image *img;
+
+  btn = manage(new Button);
+  img = new Image(Stock::REMOVE, Gtk::ICON_SIZE_SMALL_TOOLBAR);
+  btn->unset_flags(CAN_FOCUS);
+  btn->set_image(*manage(img));
+  btn->set_relief(RELIEF_NONE);
+  tips->set_tip(*btn, _("Remove this object"));
+  tb->pack_start(*btn, false, false);
+
+  int width = img->size_request().width + 4 + 2*btn->get_style()->get_xthickness();
+  int height = img->size_request().height + 4 + 2*btn->get_style()->get_ythickness();
+  btn->set_size_request(width, height);
+
+
+  HBox *charge_box = manage(new HBox);
+  charge_box->pack_start(*manage(new Label(_("Charge:"))));
+  SpinButton *charge_spin = manage(new SpinButton);
+  charge_box->pack_start(*charge_spin);
+  Alignment *charge_al = manage(new Alignment);
+  charge_al->add(*charge_box);
+  charge_al->set_padding(0, 0, 15, 0);
+  tb->pack_start(*charge_al, false, false);
+
+
+  return al;
+}
+
 bool Application::build_gui()
 {
   VBox *vbox1 = manage(new VBox);
@@ -410,6 +463,11 @@ bool Application::build_gui()
   Gtk::Toolbar *main_toolbar = static_cast<Gtk::Toolbar *>(ui_manager->get_widget("/ToolBar"));
   Toolbox *main_toolbox = manage(new Toolbox(main_toolbar));
   vbox1->pack_start(*main_toolbox, false, false);
+
+  Gtk::Widget *object_toolbar = manage(build_object_toolbar());
+  HandleBox *object_toolbox = manage(new HandleBox);
+  object_toolbox->add(*object_toolbar);
+  vbox1->pack_start(*object_toolbox, false, false);
 
   vbox1->pack_start(sim_canvas);
   sim_canvas.set_size_request(640, 480);

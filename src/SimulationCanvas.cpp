@@ -146,10 +146,38 @@ bool SimulationCanvas::delete_selected()
   return r;
 }
 
-bool SimulationCanvas::change_selected_charge(float delta)
+float SimulationCanvas::get_selected_charge()
 {
   int n;
-  float new_charge;
+
+  if(active < 0)
+    return 0;
+
+  if(active < 1024)
+  {
+    n = active;
+    if(n < bodies.size())
+    {
+      return bodies[n].charge;
+    }
+  }
+  else
+  {
+    n = active-1024;
+    if(n < plates.size())
+    {
+      return plates[n].charge;
+    }
+  }
+
+  refresh();
+
+  return 0;
+}
+
+bool SimulationCanvas::set_selected_charge(float value)
+{
+  int n;
 
   if(active < 0)
     return false;
@@ -159,14 +187,7 @@ bool SimulationCanvas::change_selected_charge(float delta)
     n = active;
     if(n < bodies.size())
     {
-      float& charge = bodies[n].charge;
-      new_charge = charge + sign(charge)*delta;
-      if((fabs(new_charge) > 0.001)
-         && (fabs(new_charge) <= MAX_CHARGE)
-         && (sign(new_charge) == sign(charge)))
-      {
-        charge = new_charge;
-      }
+      bodies[n].charge = value;
     }
   }
   else
@@ -174,18 +195,27 @@ bool SimulationCanvas::change_selected_charge(float delta)
     n = active-1024;
     if(n < plates.size())
     {
-      float& charge = plates[n].charge;
-      new_charge = charge + sign(charge)*delta;
-      if((fabs(new_charge) > 0.001)
-         && (fabs(new_charge) <= MAX_CHARGE)
-         && (sign(new_charge) == sign(charge)))
-      {
-        charge = new_charge;
-      }
+      plates[n].charge = value;
     }
   }
 
   refresh();
+
+  return true;
+}
+
+bool SimulationCanvas::change_selected_charge(float delta)
+{
+  float new_charge;
+
+  float charge = get_selected_charge();
+  new_charge = charge + sign(charge)*delta;
+  if((fabs(new_charge) > 0.01)
+     && (fabs(new_charge) <= MAX_CHARGE)
+     && (sign(new_charge) == sign(charge)))
+  {
+    set_selected_charge(new_charge);
+  }
 
   return true;
 }

@@ -17,6 +17,8 @@
       <menuitem action="AddPositive"/>
       <menuitem action="AddNegativePlate"/>
       <menuitem action="AddPositivePlate"/>
+      <separator/>
+      <menuitem action="Remove"/>
     </menu>
     <menu action="MenuHelp">
       <menuitem action="About"/>

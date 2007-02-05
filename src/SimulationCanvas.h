@@ -60,6 +60,9 @@ public:
   bool delete_plate(int n);
   bool delete_selected();
 
+  bool set_selected_charge(float value);
+  float get_selected_charge();
+
   bool change_selected_charge(float delta);
   bool increase_selected_charge(){return change_selected_charge(1);};
   bool decrease_selected_charge(){return change_selected_charge(-1);};
