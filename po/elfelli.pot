@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-04 20:39+0100\n"
+"POT-Creation-Date: 2007-02-05 22:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/Application.cpp:171 src/Application.cpp:376
+#: src/Application.cpp:171 src/Application.cpp:415
 msgid "Elfelli XML (*.elfelli)"
 msgstr ""
 
@@ -44,74 +44,86 @@ msgid ""
 "USA\n"
 msgstr ""
 
-#: src/Application.cpp:293
+#: src/Application.cpp:323
 msgid "Export _PNG"
 msgstr ""
 
-#: src/Application.cpp:299
+#: src/Application.cpp:329
 msgid "Export S_VG"
 msgstr ""
 
-#: src/Application.cpp:306
+#: src/Application.cpp:336
 msgid "Negative body"
 msgstr ""
 
-#: src/Application.cpp:313
+#: src/Application.cpp:343
 msgid "Positive body"
 msgstr ""
 
-#: src/Application.cpp:320
+#: src/Application.cpp:350
 msgid "Negative plate"
 msgstr ""
 
-#: src/Application.cpp:327
+#: src/Application.cpp:357
 msgid "Positive plate"
 msgstr ""
 
-#: src/Application.cpp:341
+#: src/Application.cpp:373
 msgid "_Scene"
 msgstr ""
 
-#: src/Application.cpp:349
+#: src/Application.cpp:381
 msgid "E_dit"
 msgstr ""
 
-#: src/Application.cpp:350
+#: src/Application.cpp:382
 msgid "Remove all objects"
 msgstr ""
 
-#: src/Application.cpp:351
+#: src/Application.cpp:383
 msgid "Add new negative body"
 msgstr ""
 
-#: src/Application.cpp:352
+#: src/Application.cpp:384
 msgid "Add new positive body"
 msgstr ""
 
-#: src/Application.cpp:353
+#: src/Application.cpp:385
 msgid "Add new negative plate"
 msgstr ""
 
-#: src/Application.cpp:354
+#: src/Application.cpp:386
 msgid "Add new positive plate"
 msgstr ""
 
-#: src/Application.cpp:356
+#: src/Application.cpp:388
 msgid "_Help"
 msgstr ""
 
-#: src/Application.cpp:373
+#: src/Application.cpp:395 src/Application.cpp:452
+msgid "Remove this object"
+msgstr ""
+
+#: src/Application.cpp:412
 msgid "Export PNG"
 msgstr ""
 
-#: src/Application.cpp:379
+#: src/Application.cpp:418
 msgid "All files"
 msgstr ""
 
-#: src/Application.cpp:382
+#: src/Application.cpp:421
 msgid "Save scene"
 msgstr ""
 
-#: src/Application.cpp:390
+#: src/Application.cpp:429
 msgid "Open scene"
+msgstr ""
+
+#: src/Application.cpp:461
+msgid "Charge:"
+msgstr ""
+
+#: src/Application.cpp:468
+msgid "Change the absolute value of this object's charge"
 msgstr ""

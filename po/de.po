@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elfelli 01\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-04 20:39+0100\n"
+"POT-Creation-Date: 2007-02-05 22:45+0100\n"
 "PO-Revision-Date: 2006-11-07 20:30+0100\n"
 "Last-Translator: Johann Rudloff <cypheon@gmx.net>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Application.cpp:171 src/Application.cpp:376
+#: src/Application.cpp:171 src/Application.cpp:415
 msgid "Elfelli XML (*.elfelli)"
 msgstr "Elfelli-XML (*.elfelli)"
 
@@ -57,74 +57,86 @@ msgstr ""
 "Free Software Foundation, Inc.\n"
 "51 Franklin Street, Fifth Floor, Boston, MA 02110, USA.\n"
 
-#: src/Application.cpp:293
+#: src/Application.cpp:323
 msgid "Export _PNG"
 msgstr "_PNG exportieren"
 
-#: src/Application.cpp:299
+#: src/Application.cpp:329
 msgid "Export S_VG"
 msgstr "S_VG exportieren"
 
-#: src/Application.cpp:306
+#: src/Application.cpp:336
 msgid "Negative body"
 msgstr "Negativer Körper"
 
-#: src/Application.cpp:313
+#: src/Application.cpp:343
 msgid "Positive body"
 msgstr "Positiver Körper"
 
-#: src/Application.cpp:320
+#: src/Application.cpp:350
 msgid "Negative plate"
 msgstr "Negative Platte"
 
-#: src/Application.cpp:327
+#: src/Application.cpp:357
 msgid "Positive plate"
 msgstr "Positive Platte"
 
-#: src/Application.cpp:341
+#: src/Application.cpp:373
 msgid "_Scene"
 msgstr "_Szene"
 
-#: src/Application.cpp:349
+#: src/Application.cpp:381
 msgid "E_dit"
 msgstr "_Bearbeiten"
 
-#: src/Application.cpp:350
+#: src/Application.cpp:382
 msgid "Remove all objects"
 msgstr "Alle Objekte entfernen"
 
-#: src/Application.cpp:351
+#: src/Application.cpp:383
 msgid "Add new negative body"
 msgstr "Neuen negativen Körper hinzufügen"
 
-#: src/Application.cpp:352
+#: src/Application.cpp:384
 msgid "Add new positive body"
 msgstr "Neuen positiven Körper hinzufügen"
 
-#: src/Application.cpp:353
+#: src/Application.cpp:385
 msgid "Add new negative plate"
 msgstr "Neue negative Platte hinzufügen"
 
-#: src/Application.cpp:354
+#: src/Application.cpp:386
 msgid "Add new positive plate"
 msgstr "Neue positive Platte hinzufügen"
 
-#: src/Application.cpp:356
+#: src/Application.cpp:388
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: src/Application.cpp:373
+#: src/Application.cpp:395 src/Application.cpp:452
+msgid "Remove this object"
+msgstr "Dieses Objekt entfernen"
+
+#: src/Application.cpp:412
 msgid "Export PNG"
 msgstr "PNG exportieren"
 
-#: src/Application.cpp:379
+#: src/Application.cpp:418
 msgid "All files"
 msgstr "Alle Dateien"
 
-#: src/Application.cpp:382
+#: src/Application.cpp:421
 msgid "Save scene"
 msgstr "Szene speichern"
 
-#: src/Application.cpp:390
+#: src/Application.cpp:429
 msgid "Open scene"
 msgstr "Szene öffnen"
+
+#: src/Application.cpp:461
+msgid "Charge:"
+msgstr "Ladung:"
+
+#: src/Application.cpp:468
+msgid "Change the absolute value of this object's charge"
+msgstr "Den Betrag der Ladung dieses Körpers ändern"
