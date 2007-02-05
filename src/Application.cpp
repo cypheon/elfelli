@@ -34,7 +34,7 @@ namespace Elfelli
 {
 
 const std::string Application::appname("Elfelli");
-const std::string Application::version("0.2");
+const std::string Application::version("0.3");
 const std::string Application::datadir(DATADIR);
 
 namespace Stock
@@ -266,7 +266,7 @@ void Application::on_about_activate()
   dlg.set_name(appname);
   dlg.set_version(version);
   dlg.set_authors(std::vector<std::string>(1, "Johann Rudloff"));
-  dlg.set_copyright("Copyright \xC2\xA9 2006 Johann Rudloff");
+  dlg.set_copyright("Copyright \xC2\xA9 2006-2007 Johann Rudloff");
   dlg.set_license(license_text);
   dlg.set_logo(Gdk::Pixbuf::create_from_file(find_datafile("elfelli-logo.svg")));
 
