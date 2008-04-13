@@ -1,7 +1,5 @@
 # -*- Python -*-
 
-import tools.Gettext
-
 def DefQuote(str):
         return r'\"%s\"' % str
 
@@ -18,7 +16,7 @@ def PkgConfig(context, pkg, version, version_op='>='):
 	context.Result(True)
 	return True
 
-env = Environment(BUILDERS={'MO': tools.Gettext.GettextMOBuilder})
+env = Environment(toolpath=['tools'], tools=['default', 'gettext'])
 
 opts = Options('elfelli.conf')
 opts.Add(BoolOption('debug', 'Set to build debug version', 1))
