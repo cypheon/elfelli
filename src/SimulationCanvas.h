@@ -96,7 +96,7 @@ private:
   bool point_hits_plate(PlateBody& p, int x, int y);
   int object_at(int x, int y);
 
-  static char *color_names[];
+  static const char *color_names[];
 
   int body_radius, plate_radius;
 

@@ -27,7 +27,7 @@
 namespace Elfelli
 {
 
-char *SimulationCanvas::color_names[] = {
+const char *SimulationCanvas::color_names[] = {
   "#0000ff",
   "#ccccff",
   "#000066",

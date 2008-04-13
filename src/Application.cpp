@@ -439,7 +439,7 @@ Widget *Application::build_object_toolbar()
   al->add(*manage(tb));
   al->set_padding(2, 2, 0, 0);
 
-  Tooltips *tips = new Tooltips;
+  Tooltips *tips = manage(new Tooltips);
   Button *btn;
   Image *img;
 
