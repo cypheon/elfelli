@@ -105,8 +105,8 @@ public:
   void add_body(const Vec2& v, float charge);
   void add_plate(const Vec2& a, const Vec2& b, float charge);
 
-  const std::vector<Body> get_bodies() const{return bodies;};
-  const std::vector<PlateBody> get_plates() const{return plates;};
+  const std::vector<Body>& get_bodies() const{return bodies;};
+  const std::vector<PlateBody>& get_plates() const{return plates;};
 
   Body& operator[](int n){return bodies[n];};
   int n_bodies(){return bodies.size();};

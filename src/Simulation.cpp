@@ -143,21 +143,21 @@ Vec2 Simulation::force_at(const Vec2& pos, float charge)
     {
       PlateBody& plate = plates[i];
 
-      float ax, ay, bx, by;
+      float xa, ya, xb, yb;
       Vec2 v;
-      ax = plate.pos_a.get_x() - pos.get_x();
-      ay = plate.pos_a.get_y() - pos.get_y();
-      bx = plate.pos_b.get_x() - plate.pos_a.get_x();
-      by = plate.pos_b.get_y() - plate.pos_a.get_y();
+      xa = plate.pos_a.get_x() - pos.get_x();
+      ya = plate.pos_a.get_y() - pos.get_y();
+      xb = plate.pos_b.get_x() - plate.pos_a.get_x();
+      yb = plate.pos_b.get_y() - plate.pos_a.get_y();
 
-      v.set_x((2*by*atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))+bx*log(by*by+2*ay*by+bx*bx+2*ax*bx+ay*ay+ax*ax)-2*by*
-               atan((ay*by+ax*bx)/(ax*by-ay*bx))-log(ay*ay+ax*ax)*bx)/((2*by*by+2*bx*bx)*(atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx)-atan((ay*by+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx))));
-
-      v.set_y((-2*bx*atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))+by*log(by*by+2*ay*by+bx*bx+2*ax*bx+ay*ay+ax*ax)+2*bx*
-               atan((ay*by+ax*bx)/(ax*by-ay*bx))-log(ay*ay+ax*ax)*by)/((2*by*by+2*bx*bx)*(atan((by*by+ay*by+bx*bx+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx)-atan((ay*by+ax*bx)/(ax*by-ay*bx))/(ax*by-ay*bx))));
+      float u = (-(2*ya*yb+2*xa*xb)*atan((yb*yb+ya*yb+xb*xb+xa*xb)/(xa*yb-xb*ya))-(xb*ya-xa*yb)*
+                 log(yb*yb+2*ya*yb+ya*ya+xb*xb+2*xa*xb+xa*xa)-(-2*ya*yb-2*xa*xb)*atan((ya*yb+xa*xb)/(xa*yb-xb*ya))-xa*log(ya*ya+xa*xa)*
+                 yb+xb*ya*log(ya*ya+xa*xa))/((2*yb*yb+2*xb*xb)*atan((yb*yb+ya*yb+xb*xb+xa*xb)/(xa*yb-xb*ya))+(-2*yb*yb-2*xb*xb)*atan((ya*yb+xa*xb)/(xa*yb-xb*ya)));
+      v.set_x(xa+u*xb);
+      v.set_y(ya+u*yb);
 
       float dist = v.length();
-      float length = sqrt(bx*bx+by*by)/30;
+      float length = sqrt(xb*xb+yb*yb)/30;
       Vec2 t = (v.normalize())/(dist*dist);
 
       f -= t * (charge * plate.charge/length);

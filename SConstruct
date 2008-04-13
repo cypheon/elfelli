@@ -40,12 +40,12 @@ if not conf.PkgConfig('gtkmm-2.4', '2.8'):
 env.AppendUnique(CCFLAGS=['-Wall'])
 
 if env['profiling']:
-	env.AppendUnique(CPPDEFINES='PROFILING')
+	env.AppendUnique(CPPDEFINES=['PROFILING'])
 
 if env['debug']:
-	env.AppendUnique(CCFLAGS=['-g', '-O0'], CPPDEFINES='DEBUG')
+	env.AppendUnique(CCFLAGS=['-g', '-O0'], CPPDEFINES=['DEBUG'])
 else:
-	env.AppendUnique(CCFLAGS=['-O3'], CPPDEFINES='NDEBUG')
+	env.AppendUnique(CCFLAGS=['-O3'], CPPDEFINES=['NDEBUG'])
 
 paths = {"bindir": env['prefix'] + '/bin',
          "datadir": env['prefix'] + '/share/elfelli',
