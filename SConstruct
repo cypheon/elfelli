@@ -28,11 +28,6 @@ opts.Add(('destdir', 'Everything installed will go in this directory', ''))
 opts.Update(env)
 opts.Save('elfelli.conf', env)
 
-if COMMAND_LINE_TARGETS:
-        targets = COMMAND_LINE_TARGETS
-else:
-        targets = DEFAULT_TARGETS
-
 conf = env.Configure(custom_tests =
                  {'CheckPkgConfig': CheckPkgConfig,
                   'PkgConfig': PkgConfig})
@@ -42,13 +37,15 @@ if not conf.CheckPkgConfig('0.15'):
 if not conf.PkgConfig('gtkmm-2.4', '2.8'):
         Exit(1)
 
+env.AppendUnique(CCFLAGS=['-Wall'])
+
 if env['profiling']:
 	env.AppendUnique(CPPDEFINES='PROFILING')
 
 if env['debug']:
-	env.AppendUnique(CXXFLAGS=['-g', '-O0'], CPPDEFINES='DEBUG')
+	env.AppendUnique(CCFLAGS=['-g', '-O0'], CPPDEFINES='DEBUG')
 else:
-	env.AppendUnique(CXXFLAGS=['-O3'], CPPDEFINES='NDEBUG')
+	env.AppendUnique(CCFLAGS=['-O3'], CPPDEFINES='NDEBUG')
 
 paths = {"bindir": env['prefix'] + '/bin',
          "datadir": env['prefix'] + '/share/elfelli',

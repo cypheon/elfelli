@@ -64,8 +64,8 @@ public:
 
   void refresh();
   void clear();
-  bool delete_body(int n);
-  bool delete_plate(int n);
+  bool delete_body(unsigned int n);
+  bool delete_plate(unsigned int n);
   bool delete_selected();
 
   bool set_selected_charge(float value);

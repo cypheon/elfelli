@@ -51,8 +51,8 @@ public:
   float get_x() const {return x;};
   float get_y() const {return y;};
 
-  float set_x(float x){this->x=x;};
-  float set_y(float y){this->y=y;};
+  void set_x(float x){this->x=x;};
+  void set_y(float y){this->y=y;};
 
   float distance(const Vec2& v) const;
   float length() const {return sqrt(x*x+y*y);};

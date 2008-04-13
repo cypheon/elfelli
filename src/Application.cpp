@@ -86,7 +86,7 @@ const std::string Application::find_datafile(const std::string& fname)
 
   std::string fullpath;
   
-  for(int i=0; i< dirs.size(); i++)
+  for(std::vector<std::string>::size_type i=0; i< dirs.size(); ++i)
     {
       fullpath = dirs[i] + "/" + fname;
 #ifdef DEBUG
@@ -266,7 +266,7 @@ void Application::on_about_activate()
   dlg.set_name(appname);
   dlg.set_version(version);
   dlg.set_authors(std::vector<std::string>(1, "Johann Rudloff"));
-  dlg.set_copyright("Copyright \xC2\xA9 2006-2007 Johann Rudloff");
+  dlg.set_copyright("Copyright \xC2\xA9 2006-2008 Johann Rudloff");
   dlg.set_license(license_text);
   dlg.set_logo(Gdk::Pixbuf::create_from_file(find_datafile("elfelli-logo.svg")));
 

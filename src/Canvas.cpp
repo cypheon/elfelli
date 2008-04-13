@@ -29,11 +29,11 @@ Path::Path()
 
 Path::Path(FluxLine l)
 {
-  for(int i=0;i<l.points.size();i++)
-    {
-      points.push_back(Gdk::Point(static_cast<int>(l.points[i].get_x()),
-                                  static_cast<int>(l.points[i].get_y())));
-    }
+  for(unsigned int i=0; i < l.points.size(); ++i)
+  {
+    points.push_back(Gdk::Point(static_cast<int>(l.points[i].get_x()),
+                                static_cast<int>(l.points[i].get_y())));
+  }
 }
 
 Path::~Path()
@@ -81,6 +81,7 @@ bool Canvas::on_expose_event(GdkEventExpose *event)
 
   get_window()->draw_drawable(get_style()->get_fg_gc(get_state()),
                               pixmap, x, y, x, y, w, h);
+  return true;
 }
 
 bool Canvas::on_configure_event(GdkEventConfigure *event)
@@ -90,6 +91,7 @@ bool Canvas::on_configure_event(GdkEventConfigure *event)
 
   pixmap = Gdk::Pixmap::create(get_window(),
                                width, height);
+  return false;
 }
 
 void Canvas::save(const std::string& filename, const std::string& format)

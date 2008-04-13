@@ -1,6 +1,6 @@
 /*
  * SimulationCanvas.cpp
- * Copyright (C) 2006  Johann Rudloff
+ * Copyright (C) 2006-2008  Johann Rudloff
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ const float SimulationCanvas::CHARGE_STEP(1.0);
 const float SimulationCanvas::CHARGE_STEP_SMALL(0.1);
 
 SimulationCanvas::SimulationCanvas():
-  mouse_pressed(false), body_radius(10), plate_radius(5),
-  drag_state(DRAG_STATE_NONE), mouse_over(-1), active(-1)
+  body_radius(10), plate_radius(5),
+  drag_state(DRAG_STATE_NONE), active(-1), mouse_pressed(false), mouse_over(-1)
 {
   signal_realize().connect(sigc::mem_fun(*this, &SimulationCanvas::after_realize_event));
 }
@@ -91,21 +91,21 @@ bool SimulationCanvas::has_selection()
 
   if(active < 1024)
   {
-    if(active < bodies.size())
+    if(static_cast<unsigned int>(active) < bodies.size())
       return true;
     else
       return false;
   }
   else
   {
-    if((active-1024) < plates.size())
+    if(static_cast<unsigned int>(active-1024) < plates.size())
       return true;
     else
       return false;
   }
 }
 
-bool SimulationCanvas::delete_body(int n)
+bool SimulationCanvas::delete_body(unsigned int n)
 {
   if(!((n < bodies.size())
        && (n >= 0)))
@@ -115,19 +115,18 @@ bool SimulationCanvas::delete_body(int n)
 
   bodies.erase(bodies.begin() + n);
 
-  int num = bodies.size();
-
-  if(active == n)
+  if(static_cast<unsigned int>(active) == n)
     active = -1;
-  if(mouse_over == n)
+  if(static_cast<unsigned int>(mouse_over) == n)
     mouse_over = -1;
 
   drag_state = DRAG_STATE_NONE;
 
   refresh();
+  return true;
 }
 
-bool SimulationCanvas::delete_plate(int n)
+bool SimulationCanvas::delete_plate(unsigned int n)
 {
   if(!((n < plates.size())
        && (n >= 0)))
@@ -137,16 +136,15 @@ bool SimulationCanvas::delete_plate(int n)
 
   plates.erase(plates.begin() + n);
 
-  int num = plates.size();
-
-  if(active == (n + 1024))
+  if(static_cast<unsigned int>(active) == (n + 1024))
     active = -1;
-  if(mouse_over == (n + 1024))
+  if(static_cast<unsigned int>(mouse_over) == (n + 1024))
     mouse_over = -1;
 
   drag_state = DRAG_STATE_NONE;
 
   refresh();
+  return true;
 }
 
 bool SimulationCanvas::delete_selected()
@@ -171,14 +169,14 @@ bool SimulationCanvas::delete_selected()
 
 float SimulationCanvas::get_selected_charge()
 {
-  int n;
+  unsigned int n;
 
   if(active < 0)
     return 0;
 
   if(active < 1024)
   {
-    n = active;
+    n = static_cast<unsigned int>(active);
     if(n < bodies.size())
     {
       return fabs(bodies[n].charge);
@@ -186,7 +184,7 @@ float SimulationCanvas::get_selected_charge()
   }
   else
   {
-    n = active-1024;
+    n = static_cast<unsigned int>(active-1024);
     if(n < plates.size())
     {
       return fabs(plates[n].charge);
@@ -200,7 +198,7 @@ float SimulationCanvas::get_selected_charge()
 
 bool SimulationCanvas::set_selected_charge(float value)
 {
-  int n;
+  unsigned int n;
   float delta = 0;
 
   if(active < 0)
@@ -208,7 +206,7 @@ bool SimulationCanvas::set_selected_charge(float value)
 
   if(active < 1024)
   {
-    n = active;
+    n = static_cast<unsigned int>(active);
     if(n < bodies.size())
     {
       delta = fabs(fabs(bodies[n].charge) - value);
@@ -217,7 +215,7 @@ bool SimulationCanvas::set_selected_charge(float value)
   }
   else
   {
-    n = active-1024;
+    n = static_cast<unsigned int>(active-1024);
     if(n < plates.size())
     {
       delta = fabs(fabs(plates[n].charge) - value);
@@ -277,7 +275,7 @@ void SimulationCanvas::run()
   Simulation::run();
 
   paths.clear();
-  for(int i=0; i<result.size(); i++)
+  for(unsigned int i=0; i<result.size(); ++i)
     {
       paths.push_back(result[i]);
     }
@@ -305,7 +303,7 @@ void SimulationCanvas::draw_flux_lines()
 
   lines_pixmap->draw_rectangle(gc_white, true, 0, 0, get_width(), get_height());
 
-  for(int i=0; i<paths.size(); i++)
+  for(unsigned int i=0; i<paths.size(); i++)
     {
       const std::vector<Gdk::Point>& points = paths[i].get_points();
       lines_pixmap->draw_lines(gc_black, points);
@@ -352,9 +350,9 @@ inline void SimulationCanvas::draw_body(int n)
 
 void SimulationCanvas::draw_bodies(bool draw_selected)
 {
-  for(int i=0; i<bodies.size(); i++)
+  for(unsigned int i=0; i<bodies.size(); ++i)
     {
-      if(active == i)
+      if(static_cast<unsigned int>(active) == i)
         {/*
           pixmap->draw_arc(gc_selection, false,
                            static_cast<int>(body.pos.get_x() - body_radius*2),
@@ -440,9 +438,9 @@ inline void SimulationCanvas::draw_plate(int n)
 
 void SimulationCanvas::draw_plates(bool draw_selected)
 {
-  for(int i=0; i<plates.size(); i++)
+  for(unsigned int i=0; i<plates.size(); i++)
     {
-      if(active == (i+1024))
+      if(static_cast<unsigned int>(active) == (i+1024))
         {
         }
       else
@@ -536,6 +534,7 @@ bool SimulationCanvas::on_configure_event(GdkEventConfigure *event)
       draw_flux_lines();
       plot();
     }
+  return false;
 }
 
 bool SimulationCanvas::on_motion_notify_event(GdkEventMotion *event)
@@ -657,6 +656,7 @@ bool SimulationCanvas::on_motion_notify_event(GdkEventMotion *event)
         }
     }
   }
+  return true;
 }
 
 bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
@@ -725,7 +725,9 @@ bool SimulationCanvas::on_button_press_event(GdkEventButton *event)
     }
     draw_plates();
     draw_bodies();
+    return true;
   }
+  return false;
 }
 
 bool SimulationCanvas::on_button_release_event(GdkEventButton *event)
@@ -756,35 +758,39 @@ bool SimulationCanvas::on_button_release_event(GdkEventButton *event)
       draw_plates();
       draw_bodies();
     }
+    return true;
   }
+  return false;
 }
 
 bool SimulationCanvas::on_scroll_event(GdkEventScroll *event)
 {
   if(event->direction == GDK_SCROLL_UP)
   {
-    increase_selected_charge();
+    return increase_selected_charge();
   }
   else if(event->direction == GDK_SCROLL_DOWN)
   {
-    decrease_selected_charge();
+    return decrease_selected_charge();
   }
+  return false;
 }
 
 bool SimulationCanvas::on_key_press_event(GdkEventKey *event)
 {
   if(event->keyval == GDK_Delete)
   {
-    delete_selected();
+    return delete_selected();
   }
   else if(event->keyval == GDK_Up)
   {
-    increase_selected_charge(event->state & GDK_SHIFT_MASK);
+    return increase_selected_charge(event->state & GDK_SHIFT_MASK);
   }
   else if(event->keyval == GDK_Down)
   {
-    decrease_selected_charge(event->state & GDK_SHIFT_MASK);
+    return decrease_selected_charge(event->state & GDK_SHIFT_MASK);
   }
+  return false;
 }
 
 bool SimulationCanvas::point_hits_body(Body& b, int x, int y)

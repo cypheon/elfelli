@@ -49,6 +49,7 @@ Vec2 Vec2::operator=(const Vec2& v)
 {
   x = v.x;
   y = v.y;
+  return (*this);
 }
 
 Vec2 Vec2::operator+(const Vec2& v)
@@ -128,7 +129,7 @@ Vec2 Vec2::normalize() const
 Vec2 Simulation::force_at(const Vec2& pos, float charge)
 {
   Vec2 f(0,0);
-  for(int i=0; i<bodies.size(); i++)
+  for(unsigned int i=0; i<bodies.size(); ++i)
     {
       Body& body = bodies[i];
       Vec2 v = body.pos - pos;
@@ -138,7 +139,7 @@ Vec2 Simulation::force_at(const Vec2& pos, float charge)
       f -= t * (charge * body.charge);
     }
 
-  for(int i=0; i<plates.size(); i++)
+  for(unsigned int i=0; i<plates.size(); ++i)
     {
       PlateBody& plate = plates[i];
 
@@ -167,6 +168,7 @@ Vec2 Simulation::force_at(const Vec2& pos, float charge)
 
 bool Simulation::step(Particle& p, float dtime)
 {
+  const float BODY_SIZE = 5;
   const float m = 5;
 
   Vec2 f = force_at(p.pos, p.charge);
@@ -180,14 +182,14 @@ bool Simulation::step(Particle& p, float dtime)
         return false;
     }
 
-  for(int i=0; i<bodies.size(); i++)
+  for(unsigned int i=0; i<bodies.size(); ++i)
     {
       Vec2& pos = bodies[i].pos;
-      if(p.pos.distance(pos) <= 5)
+      if(p.pos.distance(pos) <= BODY_SIZE)
         return false;
     }
 
-  for(int i=0; i<plates.size(); i++)
+  for(unsigned int i=0; i<plates.size(); ++i)
     {
       PlateBody& pl = plates[i];
       float u, dx, dy;
@@ -239,13 +241,12 @@ void Simulation::run()
   result.clear();
 
   Particle p;
-  const float BODY_SIZE = 5;
   const float START_VEL = 12.0;
   const float STEPSIZE = 1;
 
   FluxLine l;
 
-  for(int i=0; i<bodies.size(); i++)
+  for(unsigned int i=0; i<bodies.size(); ++i)
     {
       Body& body = bodies[i];
       if(body.charge == 0)
@@ -272,7 +273,7 @@ void Simulation::run()
         }
     }
 
-  for(int i=0; i<plates.size(); i++)
+  for(unsigned int i=0; i<plates.size(); ++i)
     {
       PlateBody& plate = plates[i];
       if(plate.charge == 0)
