@@ -34,7 +34,7 @@ namespace Elfelli
 {
 
 const std::string Application::appname("Elfelli");
-const std::string Application::version("0.3");
+const std::string Application::version("0.3.1");
 const std::string Application::datadir(DATADIR);
 
 namespace Stock
