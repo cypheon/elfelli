@@ -19,8 +19,9 @@ def PkgConfig(context, pkg, version, version_op='>='):
 env = Environment(toolpath=['tools'], tools=['default', 'gettext'])
 
 opts = Options('elfelli.conf')
-opts.Add(BoolOption('debug', 'Set to build debug version', 1))
+opts.Add(BoolOption('debug', 'Set to build debug version', 0))
 opts.Add(BoolOption('profiling', 'Set to enable profiling', 0))
+opts.Add(('ccflags', 'Additional flags that are passed to the C and C++ compilers', ''))
 opts.Add(('prefix', 'Directory to install elfelli under', '/usr/local'))
 opts.Add(('destdir', 'Everything installed will go in this directory', ''))
 opts.Update(env)
@@ -37,13 +38,20 @@ if not conf.PkgConfig('gtkmm-2.4', '2.8'):
 
 env.AppendUnique(CCFLAGS=['-Wall'])
 
+ccflags = env['ccflags'].split(' ')
+
 if env['profiling']:
 	env.AppendUnique(CPPDEFINES=['PROFILING'])
 
 if env['debug']:
+        ccflags = filter(lambda x: not x.startswith('-O'), ccflags)
 	env.AppendUnique(CCFLAGS=['-g', '-O0'], CPPDEFINES=['DEBUG'])
 else:
-	env.AppendUnique(CCFLAGS=['-O3'], CPPDEFINES=['NDEBUG'])
+        if not filter(lambda x: x.startswith('-O'), ccflags):
+                env.AppendUnique(CCFLAGS=['-O3'])
+        env.AppendUnique(CPPDEFINES=['NDEBUG'])
+
+env.AppendUnique(CCFLAGS=ccflags)
 
 paths = {"bindir": env['prefix'] + '/bin',
          "datadir": env['prefix'] + '/share/elfelli',
