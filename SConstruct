@@ -24,6 +24,7 @@ opts.Add(BoolOption('profiling', 'Set to enable profiling', 0))
 opts.Add(('ccflags', 'Additional flags that are passed to the C and C++ compilers', ''))
 opts.Add(('prefix', 'Directory to install elfelli under', '/usr/local'))
 opts.Add(('destdir', 'Everything installed will go in this directory', ''))
+opts.Add(BoolOption('build_icons', 'Render SVG icons to PNG', 0))
 opts.Update(env)
 opts.Save('elfelli.conf', env)
 
@@ -55,6 +56,7 @@ env.AppendUnique(CCFLAGS=ccflags)
 
 paths = {"bindir": env['prefix'] + '/bin',
          "datadir": env['prefix'] + '/share/elfelli',
+         "xdg_datadir": env['prefix'] + '/share',
          "localedir": env['prefix'] + '/share/locale'}
 env.Dictionary().update(paths)
 

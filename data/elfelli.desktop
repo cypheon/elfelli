@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=Elfelli
+Type=Application
+GenericName=Physics simulation
+GenericName[de]=Physik-Simulation
+Comment=Calculate and visualize electic flux lines
+Comment[de]=Elektrischer Feldlinien berechnen und darstellen
+Icon=elfelli
+Exec=elfelli
+Terminal=false
+Categories=GTK;Education;Science;Physics;

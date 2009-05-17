@@ -10,3 +10,12 @@ data_files = ['elfelli-logo.svg',
               'ui.xml']
 
 env.Install(env['destdir']+env['datadir'], data_files)
+
+env.Install(env['destdir']+env['xdg_datadir']+'/applications', 'elfelli.desktop')
+
+if env['build_icons']:
+    env.Command('elfelli_48.png', 'elfelli-logo.svg', 'rsvg -w 48 -h 48 -f png $SOURCE $TARGET')
+    env.Alias('icons', 'elfelli_48.png')
+
+env.InstallAs(env['destdir']+env['xdg_datadir']+'/icons/hicolor/scalable/apps/elfelli.svg', 'elfelli-logo.svg')
+env.InstallAs(env['destdir']+env['xdg_datadir']+'/icons/hicolor/48x48/apps/elfelli.png', 'elfelli_48.png')
