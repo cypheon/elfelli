@@ -38,6 +38,7 @@ if not conf.PkgConfig('gtkmm-2.4', '2.8'):
         Exit(1)
 
 env.AppendUnique(CCFLAGS=['-Wall'])
+env.AppendUnique(LIBS=['expat'])
 
 ccflags = env['ccflags'].split(' ')
 
