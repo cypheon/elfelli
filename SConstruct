@@ -18,13 +18,13 @@ def PkgConfig(context, pkg, version, version_op='>='):
 
 env = Environment(toolpath=['tools'], tools=['default', 'gettext'])
 
-opts = Options('elfelli.conf')
-opts.Add(BoolOption('debug', 'Set to build debug version', 0))
-opts.Add(BoolOption('profiling', 'Set to enable profiling', 0))
+opts = Variables('elfelli.conf')
+opts.Add(BoolVariable('debug', 'Set to build debug version', 0))
+opts.Add(BoolVariable('profiling', 'Set to enable profiling', 0))
 opts.Add(('ccflags', 'Additional flags that are passed to the C and C++ compilers', ''))
 opts.Add(('prefix', 'Directory to install elfelli under', '/usr/local'))
 opts.Add(('destdir', 'Everything installed will go in this directory', ''))
-opts.Add(BoolOption('build_icons', 'Render SVG icons to PNG', 0))
+opts.Add(BoolVariable('build_icons', 'Render SVG icons to PNG', 0))
 opts.Update(env)
 opts.Save('elfelli.conf', env)
 
