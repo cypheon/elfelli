@@ -7,7 +7,7 @@ Import('env')
 locales = map(lambda str: str[:-3], glob('*.po'))
 for locale in locales:
     subdir = '/%s/LC_MESSAGES' % locale
-    mo = env.MO('locale/'+subdir+'/elfelli', locale)
+    mo = env.MOFiles('locale/'+subdir+'/elfelli', locale)
     env.Install(env['destdir']+env['localedir']+subdir, mo)
 
 Default('.')
