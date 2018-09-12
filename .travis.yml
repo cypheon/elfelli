@@ -12,6 +12,8 @@ addons:
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gettext gtkmm scons; fi
+
+before_script:
   - export PATH=$PATH:/usr/local/opt/gettext/bin/
 
 script: scons -j3
