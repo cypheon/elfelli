@@ -1,6 +1,16 @@
 language: cpp
-script: scons
+
+os:
+  - linux
+  - osx
+
 addons:
   apt:
     packages:
       - libgtkmm-2.4-dev
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gtkmm scons; fi
+
+script: scons
