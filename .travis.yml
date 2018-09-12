@@ -1,2 +1,6 @@
 language: cpp
 script: scons
+addons:
+  apt:
+    packages:
+      - libgtkmm-2.4-dev
