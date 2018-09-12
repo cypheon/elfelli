@@ -1,5 +1,7 @@
 # -*- Python -*-
 
+import os
+
 def DefQuote(str):
         return r'\"%s\"' % str
 
@@ -16,7 +18,7 @@ def PkgConfig(context, pkg, version, version_op='>='):
 	context.Result(True)
 	return True
 
-env = Environment(toolpath=['tools'], tools=['default', 'gettext'])
+env = Environment(toolpath=['tools'], tools=['default', 'gettext'], ENV={'PATH': os.environ['PATH']})
 
 opts = Variables('elfelli.conf')
 opts.Add(BoolVariable('debug', 'Set to build debug version', 0))

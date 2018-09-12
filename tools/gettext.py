@@ -5,7 +5,7 @@ def generate(env, **kw):
 
     env['MSGFMT'] = env.Detect('msgfmt') or 'msgfmt'
 
-    GettextMOBuilder = Builder(action='msgfmt -o $TARGET $SOURCE',
+    GettextMOBuilder = Builder(action=env['MSGFMT'] + ' -o $TARGET $SOURCE',
                                suffix='.mo', src_suffix='.po')
     env['BUILDERS']['MO'] = GettextMOBuilder
 
