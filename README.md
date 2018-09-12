@@ -1,6 +1,8 @@
  ELFELLI README
 ----------------
 
+[![Build Status](https://travis-ci.org/cypheon/elfelli.svg?branch=master)](https://travis-ci.org/cypheon/elfelli)
+
 This is Elfelli, a tool to calculate and visualize electric flux lines
 around charged bodies.
 To run Elfelli, gtkmm, at least version 2.8, needs to be installed. 
