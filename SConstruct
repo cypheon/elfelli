@@ -37,7 +37,7 @@ if not conf.CheckPkgConfig('0.15'):
 if not conf.PkgConfig('gtkmm-2.4', '2.8'):
         Exit(1)
 
-env.AppendUnique(CCFLAGS=['-Wall'])
+env.AppendUnique(CCFLAGS=['-Wall', '-std=c++11'])
 env.AppendUnique(LIBS=['expat'])
 
 ccflags = env['ccflags'].split(' ')
