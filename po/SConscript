@@ -4,6 +4,10 @@ from glob import glob
 
 Import('env')
 
+# Compatibility with earlier SCons versions:
+if not hasattr(env, 'MOFiles'):
+    env.MOFiles = env.MO
+
 locales = map(lambda str: str[:-3], glob('*.po'))
 for locale in locales:
     subdir = '/%s/LC_MESSAGES' % locale
