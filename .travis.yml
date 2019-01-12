@@ -8,6 +8,10 @@ addons:
   apt:
     packages:
       - libgtkmm-2.4-dev
+  sonarcloud:
+    organization: "cypheon-github"
+    token:
+      secure: "eUEvYJK8o4jWOqO9HG0r+t5SOfcq/iL3qGAOrwGH9bH1cBb/TPuBIABCRJwDburAY4z+1KghpRCaR5Kh28b3ZNlRTmf1Hzrg1y7gSKmwNYPAD4vbQpz2ZQzwzHQUWV/EA0ookprSB5R0ACIDk8wOwcLF6rP/5nHjz/5ZkhM0TuDLmlikHhBlZ0MCQa+3IKrvUHiXtQt+tm4yBp/oWavwjHCXSKjc3RYq3KF7xSJEi7rjV6ohwxpdpETuhVDFweRPbnJtU87yslTGD2iCkDXEQHT1Y2LYAOpQHghRQ1FeFSiVfd1Risc9Kwcn89nGT2qMLZVh/22omR4eBScA1Acdx8RGz7tM58xvTiDFGFjbbRMY2MjBvETPp+VKBXRelzi0N/Q1VV6zOucCHIszgSgcjgWVHDQ1N8KS5kGCRWJHZI9tkyrKKCm+8tfQdgt2X1FHVQYg9RbWGhQrFBYWKYL3PwLkXVJlAg5cvCy8w9wxXA/tj8OXnB6rna93sXjBAl5IwUjbl4JGssetx0PNap426TqNJwyVagZ6d2nqNt/GoN5F5HNSY+drKJxQ7eEkAcTh2X190q2jxvxIK3iqK3YCsn+E9ZhJ5Dy5pcaGTuwD7kIu7FeGn6H4jCb2GATwz3/WJ5BZ2sqNUlIlXOvYAMhe9yHdLawInSOKWAAju7cU4z0="
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
@@ -16,4 +20,10 @@ before_install:
 before_script:
   - export PATH=$PATH:/usr/local/opt/gettext/bin/
 
-script: scons -j3
+script:
+  - sonar-scanner
+  - scons -j3
+
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
