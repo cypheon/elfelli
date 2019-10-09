@@ -42,6 +42,7 @@ target_link_libraries(elfelli
   )
 
 install(TARGETS elfelli
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
 install(DIRECTORY data/
   DESTINATION ${CMAKE_INSTALL_DATADIR}/elfelli
