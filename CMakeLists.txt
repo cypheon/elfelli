@@ -59,13 +59,13 @@ install(FILES data/elfelli-logo.svg
   )
 
 find_program(RSVG
-  rsvg NAMES rsvg-convert
+  rsvg_convert NAMES rsvg-convert
   )
 
 add_custom_command(
   OUTPUT data/elfelli_48.png
   COMMAND ${CMAKE_COMMAND} -E make_directory data
-  COMMAND "${RSVG}" ARGS -w 48 -h 48 -f png -o data/elfelli_48.png ${CMAKE_CURRENT_SOURCE_DIR}/data/elfelli-logo.svg
+  COMMAND "${RSVG_CONVERT}" ARGS -w 48 -h 48 -f png -o data/elfelli_48.png ${CMAKE_CURRENT_SOURCE_DIR}/data/elfelli-logo.svg
   MAIN_DEPENDENCY data/elfelli-logo.svg
   )
 add_custom_target( icon ALL DEPENDS data/elfelli_48.png )
