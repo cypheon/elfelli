@@ -15,6 +15,8 @@ set (CMAKE_CXX_STANDARD 11)
 add_compile_options(
   "-Wall" "-Wpedantic" "-Wextra"
   )
+include_directories(${GTKMM_INCLUDE_DIRS})
+link_directories(${GTKMM_LIBRARY_DIRS})
 add_executable( elfelli
   src/Application.cpp
   src/Canvas.cpp
@@ -34,10 +36,6 @@ if(ELFELLI_PROFILING)
   add_compile_definitions(PROFILING)
 endif()
 
-include_directories(${GTKMM_INCLUDE_DIRS})
-target_link_directories(elfelli
-  PUBLIC ${GTKMM_LIBRARY_DIRS}
-  )
 target_link_libraries(elfelli
   ${GTKMM_LIBRARIES}
   ${EXPAT_LIBRARIES}
