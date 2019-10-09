@@ -77,3 +77,5 @@ Options:""" + opts.GenerateHelpText(env))
 
 Export('env')
 SConscript(['src/SConscript', 'data/SConscript', 'po/SConscript'])
+
+print ("WARNING: the SCons build for Elfelli is deprecated, please consider using CMake")

@@ -4,6 +4,12 @@ os:
   - linux
   - osx
 
+env:
+  # (default) build using CMake
+  - USE_SCONS=
+  # (deprecated) build using SCons
+  - USE_SCONS=yes
+
 addons:
   apt:
     packages:
@@ -18,4 +24,4 @@ before_script:
   - export PATH=$PATH:/usr/local/opt/gettext/bin/
 
 script:
-  - scons -j3
+  - ./ci/build.sh
