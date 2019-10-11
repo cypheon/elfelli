@@ -20,7 +20,7 @@ addons:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install gettext gtkmm librsvg scons; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cmake gettext gtkmm librsvg scons; fi
 
 before_script:
   - export PATH=$PATH:/usr/local/opt/gettext/bin/
