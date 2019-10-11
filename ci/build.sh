@@ -2,7 +2,7 @@
 
 set -e
 
-if [ -n "$USE_SCONS" ]; then
+if [ "$BUILDSYSTEM" = "scons" ]; then
   scons -j3
 else
   cmake . && make -j3

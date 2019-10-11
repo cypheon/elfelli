@@ -6,9 +6,9 @@ os:
 
 env:
   # (default) build using CMake
-  - USE_SCONS=
+  - BUILDSYSTEM=cmake
   # (deprecated) build using SCons
-  - USE_SCONS=yes
+  - BUILDSYSTEM=scons
 
 addons:
   apt:
